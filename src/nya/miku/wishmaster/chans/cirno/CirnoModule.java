@@ -18,6 +18,7 @@
 
 package nya.miku.wishmaster.chans.cirno;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -56,6 +57,7 @@ import nya.miku.wishmaster.http.interactive.SimpleCaptchaException;
 import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpResponseModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
+import nya.miku.wishmaster.http.streamer.HttpWrongResponseException;
 import nya.miku.wishmaster.http.streamer.HttpWrongStatusCodeException;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -63,6 +65,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.PreferenceGroup;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.InputFilter;
@@ -77,14 +80,20 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public class CirnoModule extends StormwallChanModule {
     
     static final String IICHAN_NAME = "iichan.hk";
-    static final String IICHAN_DOMAIN = "iichan.hk";
-    private static final String HARUHIISM_DOMAIN = "boards.haruhiism.net";  //previous host of /abe/
+    static final String IICHAN_DOMAIN_DEFAULT = "iichan.hk";
+    static final String IICHAN_DOMAIN_MIRROR = "iichan.lol";
+    private static final List<String> IICHAN_DOMAINS = Arrays.asList(IICHAN_DOMAIN_DEFAULT, IICHAN_DOMAIN_MIRROR);
     
+    private static final String PREF_KEY_DOMAIN = "PREF_KEY_DOMAIN";
     private static final String PREF_KEY_REPORT_THREAD = "PREF_KEY_REPORT_THREAD";
     private String lastReportCaptcha;
     
     public CirnoModule(SharedPreferences preferences, Resources resources) {
         super(preferences, resources);
+    }
+    
+    private String getDomain() {
+        return preferences.getString(getSharedKey(PREF_KEY_DOMAIN), IICHAN_DOMAIN_DEFAULT);
     }
     
     @Override
@@ -107,7 +116,7 @@ public class CirnoModule extends StormwallChanModule {
     }
     
     private String getUsingUrl() {
-        return (useHttps() ? "https://" : "http://") + IICHAN_DOMAIN + "/";
+        return (useHttps() ? "https://" : "http://") + getDomain() + "/";
     }
     
     @Override
@@ -115,6 +124,16 @@ public class CirnoModule extends StormwallChanModule {
         addHttpsPreference(preferenceGroup, false);
         
         final Context context = preferenceGroup.getContext();
+        
+        ListPreference domainPref = new ListPreference(context);
+        domainPref.setTitle("Домен");
+        domainPref.setSummary("Выберите домен для загрузки");
+        domainPref.setKey(getSharedKey(PREF_KEY_DOMAIN));
+        domainPref.setEntries(IICHAN_DOMAINS.toArray(new CharSequence[IICHAN_DOMAINS.size()]));
+        domainPref.setEntryValues(IICHAN_DOMAINS.toArray(new CharSequence[IICHAN_DOMAINS.size()]));
+        domainPref.setDefaultValue(IICHAN_DOMAIN_DEFAULT);
+        preferenceGroup.addPreference(domainPref);
+        
         EditTextPreference passwordPref = new EditTextPreference(context);
         passwordPref.setTitle(R.string.iichan_prefs_report_thread);
         passwordPref.setDialogTitle(R.string.iichan_prefs_report_thread);
@@ -139,26 +158,16 @@ public class CirnoModule extends StormwallChanModule {
     }
     
     private ThreadModel[] readWakabaPage(String url, ProgressListener listener, CancellableTask task, boolean checkIfModified) throws Exception {
-        HttpResponseModel responseModel = null;
-        WakabaReader in = null;
         HttpRequestModel rqModel = HttpRequestModel.builder().setGET().setCheckIfModified(checkIfModified).build();
         try {
-            responseModel = HttpStreamer.getInstance().getFromUrl(url, rqModel, httpClient, listener, task);
-            if (responseModel.statusCode == 200) {
-                checkForStormwall(url, responseModel);
-                in = new CirnoReader(responseModel.stream, DateFormats.IICHAN_DATE_FORMAT);
-                if (task != null && task.isCancelled()) throw new Exception("interrupted");
-                return in.readWakabaPage();
-            } else {
-                if (responseModel.notModified()) return null;
-                throw new HttpWrongStatusCodeException(responseModel.statusCode, responseModel.statusCode + " - " + responseModel.statusReason);
-            }
-        } catch (Exception e) {
-            if (responseModel != null) HttpStreamer.getInstance().removeFromModifiedMap(url);
-            throw e;
-        } finally {
-            IOUtils.closeQuietly(in);
-            if (responseModel != null) responseModel.release();
+            byte[] bytes = HttpStreamer.getInstance().getBytesFromUrl(url, rqModel, httpClient, listener, task, false, stormwallDetector);
+            if (bytes == null) return null;
+            if (task != null && task.isCancelled()) throw new Exception("interrupted");
+            WakabaReader in = new CirnoReader(new ByteArrayInputStream(bytes), DateFormats.IICHAN_DATE_FORMAT);
+            return in.readWakabaPage();
+        } catch (HttpWrongResponseException e) {
+            handleWrongResponse(url, e);
+            return null;
         }
     }
     
@@ -392,13 +401,7 @@ public class CirnoModule extends StormwallChanModule {
     public String buildUrl(UrlPageModel model) throws IllegalArgumentException {
         if (!model.chanName.equals(IICHAN_NAME)) throw new IllegalArgumentException("wrong chan");
         if (model.boardName != null) {
-            if (model.boardName.equals("vo")) {
-                return "http://hatsune.ru/b/";
-            } else if (model.boardName.equals("tu")) {
-                return WakabaUtils.buildUrl(model, NowereModule.NOWERE_URL_HTTP);
-            } else if (model.boardName.equals("es")) {
-                return "http://owlchan.ru/es/";
-            } else if (model.boardName.equals("abe")) {
+            if (model.boardName.equals("abe")) {
                 return WakabaUtils.buildUrl(model, CirnoArchiveModule.IIYAKUJI_URL);
             } else if (CirnoBoards.is410Board(model.boardName)) {
                 return WakabaUtils.buildUrl(model, Chan410Module.CHAN410_URL);
@@ -410,7 +413,8 @@ public class CirnoModule extends StormwallChanModule {
     
     @Override
     public UrlPageModel parseUrl(String url) throws IllegalArgumentException {
-        UrlPageModel model = WakabaUtils.parseUrl(url, IICHAN_NAME, IICHAN_DOMAIN, HARUHIISM_DOMAIN);
+        String[] domains = IICHAN_DOMAINS.toArray(new String[IICHAN_DOMAINS.size()]);
+        UrlPageModel model = WakabaUtils.parseUrl(url, IICHAN_NAME, domains);
         if (model.type == UrlPageModel.TYPE_OTHERPAGE && model.otherPath != null && model.otherPath.endsWith("/catalogue.html")) {
             model.type = UrlPageModel.TYPE_CATALOGPAGE;
             model.boardName = model.otherPath.substring(0, model.otherPath.length() - 15);

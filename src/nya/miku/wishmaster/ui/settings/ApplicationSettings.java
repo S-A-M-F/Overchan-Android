@@ -250,11 +250,11 @@ public class ApplicationSettings {
     }
     
     public boolean isUpdateOnStartup() {
-        return preferences.getBoolean(resources.getString(R.string.pref_key_update_on_startup), false);
+        return false;
     }
 
     public boolean isUpdateAllowBeta() {
-        return preferences.getBoolean(resources.getString(R.string.pref_key_update_allow_beta), false);
+        return false;
     }
 
     public boolean isRealTablet() {
@@ -418,7 +418,7 @@ public class ApplicationSettings {
     }
     
     public boolean enableAppUpdateCheck() {
-        return !isSFWRelease();
+        return false;
     }
     
     public boolean showAllChansList() {

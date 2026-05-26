@@ -678,4 +678,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Benutzerdefinierte User-Agent-Zeichenfolge</string>
     <string name="pref_makaba_passcode">Passcode</string>
+    <string name="pref_changelog">1.9.0-samf-1: «Nicht tot ist, was ewig liegt»\n- Reduzierung auf 5 Boards (iichan.hk, 410chan.org, ii.yakuji.moe, 014chan.org, bulochka.org)\n- iichan.lol-Domain, Fehlerbehebung für leeres Board\n- WebP-Unterstützung, die «funktionieren sollte»</string>
 </resources>

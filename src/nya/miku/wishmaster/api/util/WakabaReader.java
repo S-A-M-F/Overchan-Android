@@ -419,7 +419,7 @@ public class WakabaReader implements Closeable {
         if ((startHref = html.indexOf("href=\"")) != -1 && (endHref = html.indexOf('\"', startHref + 6)) != -1) {
             attachment.path = html.substring(startHref + 6, endHref);
             String pathLower = attachment.path.toLowerCase(Locale.US);
-            if (pathLower.endsWith(".jpg") || pathLower.endsWith(".jpeg") || pathLower.endsWith(".png"))
+            if (pathLower.endsWith(".jpg") || pathLower.endsWith(".jpeg") || pathLower.endsWith(".png") || pathLower.endsWith(".webp"))
                 attachment.type = AttachmentModel.TYPE_IMAGE_STATIC;
             else if (pathLower.endsWith(".gif"))
                 attachment.type = AttachmentModel.TYPE_IMAGE_GIF;

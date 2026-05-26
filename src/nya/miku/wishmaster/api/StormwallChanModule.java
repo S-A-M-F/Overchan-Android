@@ -25,7 +25,6 @@ import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import cz.msebera.android.httpclient.Header;
@@ -69,7 +68,7 @@ public abstract class StormwallChanModule extends AbstractChanModule {
         return preferences.getString(getSharedKey(PREF_KEY_STORMWALL_COOKIE_DOMAIN), null);
     }
     
-    private static final HttpWrongResponseDetector stormwallDetector = new HttpWrongResponseDetector() {
+    protected static final HttpWrongResponseDetector stormwallDetector = new HttpWrongResponseDetector() {
         @Override
         public void check(final HttpResponseModel model) {
             for (Header header: model.headers) {
@@ -83,7 +82,7 @@ public abstract class StormwallChanModule extends AbstractChanModule {
         }
     };
 
-    private void handleWrongResponse(String url, HttpWrongResponseException e) throws HttpWrongResponseException, InteractiveException {
+    protected void handleWrongResponse(String url, HttpWrongResponseException e) throws HttpWrongResponseException, InteractiveException {
         if ("Stormwall".equals(e.getMessage())) {
             String fixedUrl = fixRelativeUrl(url);
             String html = e.getHtmlString();
@@ -138,20 +137,21 @@ public abstract class StormwallChanModule extends AbstractChanModule {
 
     @Override
     protected CaptchaModel downloadCaptcha(String url, ProgressListener listener, CancellableTask task) throws Exception {
-        Bitmap captchaBitmap = null;
-        HttpRequestModel requestModel = HttpRequestModel.DEFAULT_GET;
-        HttpResponseModel responseModel = HttpStreamer.getInstance().getFromUrl(url, requestModel, httpClient, listener, task);
-        try {
-            checkForStormwall(url, responseModel);
-            InputStream imageStream = responseModel.stream;
-            captchaBitmap = BitmapFactory.decodeStream(imageStream);
-        } finally {
-            responseModel.release();
+        if (!canStormwall()) {
+            return super.downloadCaptcha(url, listener, task);
         }
-        CaptchaModel captchaModel = new CaptchaModel();
-        captchaModel.type = CaptchaModel.TYPE_NORMAL;
-        captchaModel.bitmap = captchaBitmap;
-        return captchaModel;
+        HttpRequestModel requestModel = HttpRequestModel.DEFAULT_GET;
+        try {
+            byte[] bytes = HttpStreamer.getInstance().getBytesFromUrl(url, requestModel, httpClient, listener, task, false, stormwallDetector);
+            if (bytes == null) return null;
+            CaptchaModel captchaModel = new CaptchaModel();
+            captchaModel.type = CaptchaModel.TYPE_NORMAL;
+            captchaModel.bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            return captchaModel;
+        } catch (HttpWrongResponseException e) {
+            handleWrongResponse(url, e);
+            return null;
+        }
     }
 
     @Override

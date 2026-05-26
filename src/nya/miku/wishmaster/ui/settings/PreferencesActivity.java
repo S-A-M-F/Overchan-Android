@@ -169,15 +169,20 @@ public class PreferencesActivity extends PreferenceActivity {
             String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             aboutPreference.setSummary(versionName);
         } catch (Exception e) {}
-        if (MainApplication.getInstance().settings.enableAppUpdateCheck()) {
-            aboutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    AppUpdatesChecker.checkForUpdates(PreferencesActivity.this);
-                    return true;
-                }
-            });
-        }
+        aboutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new AlertDialog.Builder(PreferencesActivity.this)
+                    .setTitle(R.string.pref_about_version_title)
+                    .setMessage(getString(R.string.pref_changelog))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+                return true;
+            }
+        });
+        
+        getPreferenceManager().findPreference(getString(R.string.pref_key_update_on_startup)).setEnabled(false);
+        getPreferenceManager().findPreference(getString(R.string.pref_key_update_allow_beta)).setEnabled(false);
         
         Preference licensePreference = getPreferenceManager().findPreference(getString(R.string.pref_key_about_license));
         licensePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

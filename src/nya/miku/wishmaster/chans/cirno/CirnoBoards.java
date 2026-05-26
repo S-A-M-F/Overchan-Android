@@ -59,17 +59,14 @@ public class CirnoBoards {
         addBoard("r", "Просьбы", "Общее", "Аноним", false);
         addBoard("dev", "Разработка", "Общее", "Стив Балмер", false);
         addBoard("o", "Рисование", "Общее", "Аноним", false);
-        addBoard("tu", "Туризм", "Общее", "Аноним", false);
         addBoard("ph", "Фото", "Общее", "Аноним", false);
         addBoard("s", "Электроника и ПО", "Общее", "Чии", false);
-        addBoard("es", "Бесконечное лето", "Игры", "Пионер", false);
         addBoard("vg", "Видеоигры", "Игры", "Марио", false);
         addBoard("au", "Автомобили", "Транспорт", "Джереми Кларксон", false);
         addBoard("tr", "Транспорт", "Транспорт", "Аноним", false);
         addBoard("a", "Аниме и манга", "Японская культура", "Мокона", false);
         addBoard("aa", "Аниме-арт", "Японская культура", "Ракка", false);
         addBoard("vn", "Визуальные новеллы", "Японская культура", "Сэйбер", false);
-        addBoard("vo", "Vocaloid", "Японская культура", "", false); //hatsune
         addBoard("abe", "Ёситоси Абэ", "Японская культура", "Chada", false);
         addBoard("c", "Косплей", "Японская культура", "Аноним", false);
         addBoard("rm", "Rozen Maiden", "Японская культура", "Суйгинто", false);

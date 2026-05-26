@@ -677,4 +677,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Custom User-Agent string</string>
     <string name="pref_makaba_passcode">Passcode</string>
+    <string name="pref_changelog">1.9.0-samf-1: "That is not dead which can eternal lie"\n- Scope-down to 5 boards (iichan.hk, 410chan.org, ii.yakuji.moe, 014chan.org, bulochka.org)\n- iichan.lol domain, empty board bug fix\n- WebP support that "should work"</string>
 </resources>

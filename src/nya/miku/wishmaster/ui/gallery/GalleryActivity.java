@@ -942,7 +942,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener, V
     }
     
     private void setStaticImage(final GalleryItemViewTag tag, final File file) {
-        if (!settings.useScaleImageView() || Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1 || Jpeg.isNonStandardGrayscaleImage(file)) {
+        if (!settings.useScaleImageView() || file.getPath().toLowerCase(Locale.US).endsWith(".webp") ||
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1 || Jpeg.isNonStandardGrayscaleImage(file)) {
             setWebView(tag, file);
             return;
         }

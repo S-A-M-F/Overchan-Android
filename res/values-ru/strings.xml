@@ -686,4 +686,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Персональный User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
+    <string name="pref_changelog">1.9.0-samf-1: «Не мертво то, что вечность стережет»\n- Сокращение до 5 досок (iichan.hk, 410chan.org, ii.yakuji.moe, 014chan.org, bulochka.org)\n- Домен iichan.lol, исправление бага пустой доски\n- Поддержка WebP, которая «должна работать»</string>
 </resources>

@@ -38,6 +38,7 @@ public class PostFormMarkup {
             case BoardModel.MARK_BBCODE: return feature != FEATURE_CODE;
             case BoardModel.MARK_4CHAN: return (feature != FEATURE_STRIKE) && (feature != FEATURE_CODE);
             case BoardModel.MARK_WAKABAMARK: return feature != FEATURE_UNDERLINE;
+            case BoardModel.MARK_WAKABAMARK_EXT: return true;
             case BoardModel.MARK_NULL_CHAN: return feature != FEATURE_UNDERLINE;
             case BoardModel.MARK_INFINITY: return feature != FEATURE_CODE;
         }
@@ -70,6 +71,36 @@ public class PostFormMarkup {
                     }
                     comment.replace(selectionStart, selectionEnd, strike.substring(0, strike.length() - 1));
                     commentField.setSelection(selectionStart);
+                    break;
+                case FEATURE_SPOILER:
+                    comment.replace(selectionStart, selectionEnd, "%%" + text.replace("\n", "%%\n%%") + "%%");
+                    commentField.setSelection(selectionStart + 2);
+                    break;
+                case FEATURE_QUOTE:
+                    comment.replace(selectionStart, selectionEnd, ">" + text.replace("\n", "\n>"));
+                    break;
+                case FEATURE_CODE:
+                    comment.replace(selectionStart, selectionEnd, "`" + text.replace("`", "``").replace("\n", "`\n`").replace("\n``", "\n") + "`");
+                    commentField.setSelection(selectionStart + 1);
+                    break;
+            }
+        } else if (markType == BoardModel.MARK_WAKABAMARK_EXT) {
+            switch (feature) {
+                case FEATURE_BOLD:
+                    comment.replace(selectionStart, selectionEnd, "**" + text.replace("\n", "**\n**") + "**");
+                    commentField.setSelection(selectionStart + 2);
+                    break;
+                case FEATURE_ITALIC:
+                    comment.replace(selectionStart, selectionEnd, "*" + text.replace("\n", "*\n*") + "*");
+                    commentField.setSelection(selectionStart + 1);
+                    break;
+                case FEATURE_UNDERLINE:
+                    comment.replace(selectionStart, selectionEnd, "[u]" + text + "[/u]");
+                    commentField.setSelection(selectionStart + 3);
+                    break;
+                case FEATURE_STRIKE:
+                    comment.replace(selectionStart, selectionEnd, "^^" + text.replace("\n", "^^\n^^") + "^^");
+                    commentField.setSelection(selectionStart + 2);
                     break;
                 case FEATURE_SPOILER:
                     comment.replace(selectionStart, selectionEnd, "%%" + text.replace("\n", "%%\n%%") + "%%");

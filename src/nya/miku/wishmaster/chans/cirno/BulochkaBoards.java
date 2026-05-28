@@ -67,7 +67,7 @@ public class BulochkaBoards {
         model.allowIcons = false;
         model.attachmentsMaxCount = 1;
         model.attachmentsFormatFilters = name.equals("d") ? ATTACHMENT_FILTERS_NO_VIDEO : ATTACHMENT_FILTERS;
-        model.markType = BoardModel.MARK_WAKABAMARK;
+        model.markType = BoardModel.MARK_WAKABAMARK_EXT;
 
         model.firstPage = 0;
         model.lastPage = BoardModel.LAST_PAGE_UNDEFINED;

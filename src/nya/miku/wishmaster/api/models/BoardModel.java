@@ -139,6 +139,8 @@ public class BoardModel implements Serializable {
     /** Константное значение для обозначения типа допустимой разметки при отправке поста - Infinity.<br>
      *  ''italic'' '''bold''' __underline__ **spoiler** ~~strike~~ */
     public static final int MARK_INFINITY = 5;
+    /** WakabaMark extended — ^^strike^^ [u]underline[/u] */
+    public static final int MARK_WAKABAMARK_EXT = 6;
     
     /** Константное значение, если на данной доске нет возможности пожаловаться на сообщения */
     public static final int REPORT_NOT_ALLOWED = 0;

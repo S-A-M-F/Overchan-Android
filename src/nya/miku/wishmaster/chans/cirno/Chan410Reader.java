@@ -26,12 +26,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import nya.miku.wishmaster.api.models.PostModel;
 import nya.miku.wishmaster.api.util.CryptoUtils;
 import nya.miku.wishmaster.api.util.WakabaReader;
 
 /**
- * Парсер страниц 410chan.org, корректно определяется сажа (символ ⇩ в теме сообщения)
+ * Парсер страниц 410chan.org, корректно определяется сажа (тег post-badge-sage)
  * @author miku-nyan
  *
  */
@@ -72,6 +71,7 @@ public class Chan410Reader extends WakabaReader {
                 String threadBadge = readUntilSequence("\"".toCharArray());
                 if (threadBadge.contains("locked")) currentThread.isClosed = true;
                 if (threadBadge.contains("sticky")) currentThread.isSticky = true;
+                if (threadBadge.contains("sage")) currentPost.sage = true;
                 badgePos = 0;
             }
         } else {
@@ -91,11 +91,6 @@ public class Chan410Reader extends WakabaReader {
         } else {
             if (idPos != 0) idPos = ch == USER_ID_FILTER[0] ? 1 : 0;
         }
-    }
-    
-    @Override
-    protected void postprocessPost(PostModel post) {
-        if (post.subject.contains("\u21E9")) post.sage = true;
     }
     
     @Override

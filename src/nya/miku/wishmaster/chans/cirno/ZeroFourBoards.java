@@ -17,7 +17,7 @@ public class ZeroFourBoards {
     private static final SimpleBoardModel[] SIMPLE_ARRAY;
 
     static {
-        addBoard("d", "/d/епо", "Работа сайта", "Девочка", false);
+        addBoard("d", "/d/епо", "Работа сайта", "Anonymous", false);
         addBoard("b", "/b/улочная", "Общее", "Девочка", true);
 
         SIMPLE_ARRAY = new SimpleBoardModel[LIST.size()];
@@ -52,9 +52,9 @@ public class ZeroFourBoards {
         model.defaultUserName = defaultPosterName;
         model.bumpLimit = 500;
 
-        model.readonlyBoard = name.equals("d");
+        model.readonlyBoard = false;
         model.requiredFileForNewThread = !name.equals("d");
-        model.allowDeletePosts = !name.equals("d");
+        model.allowDeletePosts = true;
         model.allowDeleteFiles = model.allowDeletePosts;
         model.allowReport = BoardModel.REPORT_SIMPLE;
         model.allowNames = !name.equals("b");
@@ -71,7 +71,7 @@ public class ZeroFourBoards {
 
         model.firstPage = 0;
         model.lastPage = BoardModel.LAST_PAGE_UNDEFINED;
-        model.catalogAllowed = !name.equals("d");
+        model.catalogAllowed = true;
         return model;
     }
 

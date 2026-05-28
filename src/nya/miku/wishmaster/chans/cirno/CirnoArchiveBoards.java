@@ -28,7 +28,7 @@ import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.SimpleBoardModel;
 
 public class CirnoArchiveBoards {
-    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif" };
+    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif", "webp" };
 
     private static final List<String> POSTING_BOARDS = Arrays.asList("dev", "abe");
 

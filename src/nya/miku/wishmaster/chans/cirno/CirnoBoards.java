@@ -28,7 +28,7 @@ import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.SimpleBoardModel;
 
 public class CirnoBoards {
-    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif", "webm", "mp4", "ogv", "swf" };
+    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "swf" };
     
     private static final List<String> IICHAN_BOARDS_410 = Arrays.asList("gnx", "int", "ts", "cu", "dev", "ci");
     
@@ -126,7 +126,7 @@ public class CirnoBoards {
         model.customMarkDescription = "Spoiler";
         model.allowRandomHash = true;
         model.allowIcons = false;
-        model.attachmentsMaxCount = name.equals("d") ? 0 : 1;
+        model.attachmentsMaxCount = 1;
         model.attachmentsFormatFilters = ATTACHMENT_FILTERS;
         model.markType = BoardModel.MARK_WAKABAMARK;
         

@@ -9,7 +9,8 @@ import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.SimpleBoardModel;
 
 public class BulochkaBoards {
-    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif", "webm", "mp4", "ogv" };
+    private static final String[] ATTACHMENT_FILTERS = new String[] { "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4" };
+    private static final String[] ATTACHMENT_FILTERS_NO_VIDEO = new String[] { "jpg", "jpeg", "png", "gif", "webp" };
 
     private static final List<BoardModel> LIST = new ArrayList<BoardModel>();
     private static final Map<String, BoardModel> MAP = new HashMap<String, BoardModel>();
@@ -64,8 +65,8 @@ public class BulochkaBoards {
         model.allowCustomMark = false;
         model.allowRandomHash = true;
         model.allowIcons = false;
-        model.attachmentsMaxCount = name.equals("d") ? 0 : 1;
-        model.attachmentsFormatFilters = ATTACHMENT_FILTERS;
+        model.attachmentsMaxCount = 1;
+        model.attachmentsFormatFilters = name.equals("d") ? ATTACHMENT_FILTERS_NO_VIDEO : ATTACHMENT_FILTERS;
         model.markType = BoardModel.MARK_WAKABAMARK;
 
         model.firstPage = 0;

@@ -56,6 +56,7 @@ import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpResponseModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
 import nya.miku.wishmaster.http.streamer.HttpWrongStatusCodeException;
+import nya.miku.wishmaster.lib.org_json.JSONException;
 import nya.miku.wishmaster.lib.org_json.JSONObject;
 
 public class Chan410Module extends AbstractChanModule {
@@ -256,7 +257,7 @@ public class Chan410Module extends AbstractChanModule {
     
     @Override
     public String sendPost(SendPostModel model, ProgressListener listener, CancellableTask task) throws Exception {
-        String url = getUsingUrl() + "board.php";
+        String url = getUsingUrl() + "board.php?" + model.boardName + "&fetch-call=1";
         ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task).
                 addString("board", model.boardName).
                 addString("replythread", model.threadNumber != null ? model.threadNumber : "0").
@@ -282,13 +283,28 @@ public class Chan410Module extends AbstractChanModule {
             } else if (response.statusCode == 200) {
                 ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
                 IOUtils.copyStream(response.stream, output);
-                String htmlResponse = output.toString("UTF-8");
-                if (!htmlResponse.contains("<blockquote")) {
-                    int start = htmlResponse.indexOf("<h2 style=\"font-size: 2em;font-weight: bold;text-align: center;\">");
+                String body = output.toString("UTF-8");
+                
+                // try JSON (fetch-call=1 response)
+                try {
+                    JSONObject json = new JSONObject(body);
+                    if (json.has("redirect")) {
+                        return fixRelativeUrl(json.getString("redirect"));
+                    }
+                    if (json.has("errormsg")) {
+                        String msg = json.optString("errormsg", "");
+                        String extended = json.optString("extended");
+                        if (!extended.isEmpty()) msg += ": " + extended;
+                        throw new Exception(msg);
+                    }
+                } catch (JSONException e) { /* not JSON, fall through to HTML parsing */ }
+                
+                if (!body.contains("<blockquote")) {
+                    int start = body.indexOf("<h2 style=\"font-size: 2em;font-weight: bold;text-align: center;\">");
                     if (start != -1) {
-                        int end = htmlResponse.indexOf("</h2>", start + 65);
+                        int end = body.indexOf("</h2>", start + 65);
                         if (end != -1) {
-                            throw new Exception(htmlResponse.substring(start + 65, end).trim());
+                            throw new Exception(body.substring(start + 65, end).trim());
                         }
                     }
                 }

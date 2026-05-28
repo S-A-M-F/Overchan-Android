@@ -678,5 +678,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Benutzerdefinierte User-Agent-Zeichenfolge</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.0-samf-1: «Nicht tot ist, was ewig liegt»\n- Reduzierung auf 5 Boards (iichan.hk, 410chan.org, ii.yakuji.moe, 014chan.org, bulochka.org)\n- iichan.lol-Domain, Fehlerbehebung für leeres Board\n- WebP-Unterstützung, die «funktionieren sollte»</string>
+    <string name="pref_changelog">1.9.1-samf-1: „Aber eines Tages wird das Zusammenfügen der einzelnen Erkenntnisse...“\n- WebP- und JFIF-Unterstützung für Anhänge\n- Beitragsformatierungsfunktionen (Durchstreichung, Unterstreichung) auf 410chan, 014chan und bulochka\n- Robustere Serverantwortverarbeitung beim Senden von Beiträgen auf 410chan und 014chan\n- OGV aus unterstützten Anhangstypen entfernt\n- Sage-Erkennung auf 410chan\n- /d/-Board auf bulochka und 014chan funktioniert jetzt wie vorgesehen</string>
 </resources>

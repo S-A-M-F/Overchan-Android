@@ -677,5 +677,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Custom User-Agent string</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.0-samf-1: "That is not dead which can eternal lie"\n- Scope-down to 5 boards (iichan.hk, 410chan.org, ii.yakuji.moe, 014chan.org, bulochka.org)\n- iichan.lol domain, empty board bug fix\n- WebP support that "should work"</string>
+    <string name="pref_changelog">1.9.1-samf-1: "Some day, the piecing together of dissociated knowledge..."\n- WebP and JFIF support for posting attachments\n- Post formatting features (strikethrough, underline) on 410chan, 014chan and bulochka\n- More robust on-post server response handling on 410chan and 014chan\n- Removed OGV from supported attachment types\n- Sage detection on 410chan\n- /d/ board on bulochka and 014chan now work as intended</string>
 </resources>

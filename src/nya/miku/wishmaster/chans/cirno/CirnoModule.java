@@ -242,7 +242,7 @@ public class CirnoModule extends StormwallChanModule {
 
     @Override
     public CaptchaModel getNewCaptcha(String boardName, String threadNumber, ProgressListener listener, CancellableTask task) throws Exception {
-        String captchaUrl = getUsingUrl() + "/cgi-bin/captcha" + (boardName.equals("b") || boardName.equals("a") ? "1" : "") + ".pl/" +
+        String captchaUrl = getUsingUrl() + "cgi-bin/captcha" + (boardName.equals("b") || boardName.equals("a") ? "1" : "") + ".pl/" +
                 boardName + "/?key=" + (threadNumber == null ? "mainpage" : ("res" + threadNumber));
         return downloadCaptcha(captchaUrl, listener, task);        
     }
@@ -290,9 +290,13 @@ public class CirnoModule extends StormwallChanModule {
                     }
                 }
             } else if (response.statusCode == 200) {
+                checkForStormwall(url, response);
                 ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
                 IOUtils.copyStream(response.stream, output);
                 String htmlResponse = output.toString("UTF-8");
+                if (!htmlResponse.contains("<html")) {
+                    throw new Exception(htmlResponse);
+                }
                 if (!htmlResponse.contains("<blockquote")) {
                     int start = htmlResponse.indexOf("<h1 style=\"text-align: center\">");
                     if (start != -1) {
@@ -332,6 +336,7 @@ public class CirnoModule extends StormwallChanModule {
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
             if (response.statusCode == 200) {
+                checkForStormwall(url, response);
                 ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
                 IOUtils.copyStream(response.stream, output);
                 String htmlResponse = output.toString("UTF-8");

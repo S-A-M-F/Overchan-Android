@@ -34,11 +34,11 @@ public class Chan410Boards {
             Arrays.asList("d", "b", "int", "cu", "dev", "r", "a", "ts", "tm", "gnx", "ci" ));
     
     private static final String[] ATTACHMENT_FILTERS = new String[] {
-            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "jfif" };
+            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "ogv" };
     private static final String[] ATTACHMENT_FILTERS_A = new String[] {
-            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "jfif", "ass", "srt", "ssa" };
+            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "ogv", "ass", "srt", "ssa" };
     private static final String[] ATTACHMENT_FILTERS_DEV = new String[] {
-            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "jfif", "7z", "bz", "bz2", "gz",
+            "jpg", "jpeg", "png", "gif", "webp", "webm", "mp4", "ogv", "7z", "bz", "bz2", "gz",
             "mo", "mp3", "ogg", "pdf", "psd", "rar", "svg", "swf", "txt", "xcf", "zip" };
     
     private static final List<BoardModel> LIST = new ArrayList<BoardModel>();
@@ -104,7 +104,7 @@ public class Chan410Boards {
         if (name.equals("a")) model.attachmentsFormatFilters = ATTACHMENT_FILTERS_A;
         else if (name.equals("dev")) model.attachmentsFormatFilters = ATTACHMENT_FILTERS_DEV;
         else model.attachmentsFormatFilters = ATTACHMENT_FILTERS;
-        model.markType = BoardModel.MARK_WAKABAMARK_EXT;
+        model.markType = BoardModel.MARK_WAKABAMARK;
         
         model.firstPage = 0;
         model.lastPage = BoardModel.LAST_PAGE_UNDEFINED;

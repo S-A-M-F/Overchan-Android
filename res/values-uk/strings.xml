@@ -393,6 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_dialog_format">Перевірка: %s</string>
     <string name="error_interactive_cancelled_format">Перевірку не пройдено: %s</string>
     <string name="error_out_of_memory">Пам’ять вичерпано</string>
+    <string name="error_https_required">вимагає HTTPS - увімкніть у налаштуваннях дошки</string>
     
     <string name="ssl_accept_cert">Недовірений сертифікат</string>
     <string name="ssl_trust_anchor">Сертифікат не підписаний довіреною центром сертифікації.</string>
@@ -693,5 +694,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Персональний User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
-    <string name="pref_changelog">1.9.1-samf-1: «Рано чи пізно уривки незбагненного досі знання зберуться докупи...»\n- Підтримка WebP та JFIF для вкладень\n- Оформлення постів (закреслення, підкреслення) на 410chan, 014chan та bulochka\n- Надійніша обробка відповіді сервера при надсиланні поста на 410chan та 014chan\n- OGV вилучено з підтримуваних типів вкладень\n- Визначення sage на 410chan\n- /d/ на bulochka та 014chan тепер працює як слід</string>
+    <string name="pref_changelog">1.9.2-samf-1: «Чуття підказувало мені — тут щось не те. Все було не тим, чим здавалося.»\n- HTTPS увімкнено за замовчуванням для активних чанів\n- Перенаправлення HTTP→HTTPS при надсиланні тепер показують зрозумілу помилку\n- Відлагоджувальна збірка тепер співіснує з релізною\n- Назви доменів iichan винесено в локалізовані рядки\n- Злито гілки функцій: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing</string>
 </resources>

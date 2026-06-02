@@ -383,6 +383,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_dialog_format">%s Überprüfung läuft</string>
     <string name="error_interactive_cancelled_format">%s Überprüfung nicht bestanden</string>
     <string name="error_out_of_memory">Out of Memory</string>
+    <string name="error_https_required">erfordert HTTPS - in den Board-Einstellungen aktivieren</string>
     
     <string name="ssl_accept_cert">Unbekanntes Zertifikat akzeptieren?</string>
     <string name="ssl_trust_anchor">Das Serverzertifikat stammt nicht von einer bekannten Ausstellungsstelle (CA).</string>
@@ -681,5 +682,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Benutzerdefinierte User-Agent-Zeichenfolge</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.1-samf-1: „Aber eines Tages wird das Zusammenfügen der einzelnen Erkenntnisse...“\n- WebP- und JFIF-Unterstützung für Anhänge\n- Beitragsformatierungsfunktionen (Durchstreichung, Unterstreichung) auf 410chan, 014chan und bulochka\n- Robustere Serverantwortverarbeitung beim Senden von Beiträgen auf 410chan und 014chan\n- OGV aus unterstützten Anhangstypen entfernt\n- Sage-Erkennung auf 410chan\n- /d/-Board auf bulochka und 014chan funktioniert jetzt wie vorgesehen</string>
+    <string name="pref_changelog">1.9.2-samf-1: „Irgend etwas, das spürte ich instinktiv, war auf grauenhafte Weise schiefgegangen. Alles war anders, als es schien.“\n- HTTPS standardmäßig für aktive Chans aktiviert\n- HTTP→HTTPS-Weiterleitungen beim Posten zeigen nun einen beschreibenden Fehler an\n- Debug-APK koexistiert nun mit der Release-Version\n- iichan-Domain-Bezeichnungen in lokalisierte Strings extrahiert\n- Funktionszweige zusammengeführt: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing</string>
 </resources>

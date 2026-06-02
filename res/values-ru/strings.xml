@@ -390,6 +390,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_dialog_format">Выполняется проверка %s</string>
     <string name="error_interactive_cancelled_format">Проверка %s не пройдена</string>
     <string name="error_out_of_memory">Недостаточно памяти</string>
+    <string name="error_https_required">требуется HTTPS - включите в настройках доски</string>
     
     <string name="ssl_accept_cert">Недоверенный сертификат</string>
     <string name="ssl_trust_anchor">Сертификат не подписан доверенным центром сертификации.</string>
@@ -689,5 +690,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Персональный User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
-    <string name="pref_changelog">1.9.1-samf-1: «Однажды соединение разрозненных обрывков знаний...»\n- Поддержка WebP и JFIF для вложений\n- Оформление постов (зачёркивание, подчёркивание) на 410chan, 014chan и bulochka\n- Более надёжная обработка ответа сервера при отправке поста на 410chan и 014chan\n- Удалён OGV из поддерживаемых типов вложений\n- Определение сажи на 410chan\n- /d/ на bulochka и 014chan теперь работает как положено</string>
+    <string name="pref_changelog">1.9.2-samf-1: «Я интуитивно чувствовал: что-то тут не так, всё не то, чем кажется.»\n- HTTPS включён по умолчанию для активных чанов\n- Перенаправления HTTP→HTTPS при отправке теперь показывают понятную ошибку\n- Отладочная сборка теперь сосуществует с релизной\n- Названия доменов iichan вынесены в локализованные строки\n- Слиты ветки функций: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing</string>
 </resources>

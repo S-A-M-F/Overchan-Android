@@ -24,10 +24,10 @@ Changelog entries are stored as `pref_changelog` string resources in 4 locale fi
 
 | Language | Source |
 |----------|--------|
-| English | Original Lovecraft |
-| Russian | Колесников / Королёв / Соколов translation |
-| German | H. C. Artmann, *Cthulhu Geistergeschichten*, Suhrkamp 1975 |
-| Ukrainian | Дар'я Семенова, журнал «Всесвіт» |
+| English | Original Lovecraft, *The Whisperer in Darkness* (1931) |
+| Russian | Алякринский / Эрлихман / Шокин / Попов, Flibusta.su |
+| German | Rudolf Hermstein, Suhrkamp Taschenbuch 1997 (ISBN 3518392611) |
+| Ukrainian | Остап Українець / Катерина Дудка, coollib.cc |
 
 ## Example
 

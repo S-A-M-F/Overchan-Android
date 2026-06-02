@@ -26,6 +26,12 @@ dependencies {
     implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
 }
 
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     compileSdkVersion 24
     buildToolsVersion "27.0.3"
@@ -48,6 +54,14 @@ android {
         assets.srcDirs = ['assets']
         jni.srcDirs = ['jni']
     }
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties.getProperty('storeFile', 'my.keystore'))
+            storePassword keystoreProperties.getProperty('storePassword')
+            keyAlias keystoreProperties.getProperty('keyAlias')
+            keyPassword keystoreProperties.getProperty('keyPassword')
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
@@ -55,6 +69,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
         }
     }
     externalNativeBuild {

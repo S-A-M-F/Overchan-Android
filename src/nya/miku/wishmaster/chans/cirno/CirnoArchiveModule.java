@@ -55,6 +55,7 @@ import nya.miku.wishmaster.http.streamer.HttpWrongStatusCodeException;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceGroup;
 import android.support.v4.content.res.ResourcesCompat;
 
 
@@ -63,8 +64,21 @@ public class CirnoArchiveModule extends AbstractChanModule {
     static final String IIYAKUJI_DOMAIN = "ii.yakuji.moe";
     static final String IIYAKUJI_URL = "http://" + IIYAKUJI_DOMAIN + "/";
 
+    private boolean useHttps() {
+        return useHttps(true);
+    }
+
+    private String getUsingUrl() {
+        return (useHttps() ? "https://" : "http://") + IIYAKUJI_DOMAIN + "/";
+    }
+
     public CirnoArchiveModule(SharedPreferences preferences, Resources resources) {
         super(preferences, resources);
+    }
+
+    @Override
+    public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
+        addHttpsPreference(preferenceGroup, true);
     }
 
     @Override
@@ -191,14 +205,14 @@ public class CirnoArchiveModule extends AbstractChanModule {
 
     @Override
     public CaptchaModel getNewCaptcha(String boardName, String threadNumber, ProgressListener listener, CancellableTask task) throws Exception {
-        String captchaUrl = IIYAKUJI_URL + boardName +"/captcha.pl?key="
+        String captchaUrl = getUsingUrl() + boardName +"/captcha.pl?key="
                 + (threadNumber == null ? "mainpage" : ("res" + threadNumber));
         return downloadCaptcha(captchaUrl, listener, task);
     }
 
     @Override
     public String sendPost(SendPostModel model, ProgressListener listener, CancellableTask task) throws Exception {
-        String url = IIYAKUJI_URL + model.boardName + "/wakaba.pl";
+        String url = getUsingUrl() + model.boardName + "/wakaba.pl";
         ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task).
                 addString("task", "post");
         if (model.threadNumber != null) postEntityBuilder.addString("parent", model.threadNumber);
@@ -238,6 +252,14 @@ public class CirnoArchiveModule extends AbstractChanModule {
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
+            if ((response.statusCode == 301 || response.statusCode == 302) && response.locationHeader != null) {
+                if (url.startsWith("http://") && response.locationHeader.startsWith("https://") &&
+                        url.substring(7).equals(response.locationHeader.substring(8))) {
+                    throw new Exception(getDisplayingName() + " " + resources.getString(R.string.error_https_required));
+                }
+                response.release();
+                response = HttpStreamer.getInstance().getFromUrl(fixRelativeUrl(response.locationHeader), request, httpClient, null, task);
+            }
             if (response.statusCode == 303) {
                 return fixRelativeUrl(response.locationHeader);
             } else if (response.statusCode == 200) {
@@ -269,7 +291,7 @@ public class CirnoArchiveModule extends AbstractChanModule {
 
     @Override
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
-        String url = IIYAKUJI_URL + model.boardName + "wakaba.pl";
+        String url = getUsingUrl() + model.boardName + "wakaba.pl";
 
         List<NameValuePair> pairs = new ArrayList<>();
         pairs.add(new BasicNameValuePair("delete", model.postNumber));
@@ -304,8 +326,8 @@ public class CirnoArchiveModule extends AbstractChanModule {
     @Override
     public String buildUrl(UrlPageModel model) throws IllegalArgumentException {
         if (!model.chanName.equals(IIYAKUJI_NAME)) throw new IllegalArgumentException("wrong chan");
-        if (model.type == UrlPageModel.TYPE_CATALOGPAGE) return IIYAKUJI_URL + model.boardName + "/catalogue.html";
-        return WakabaUtils.buildUrl(model, IIYAKUJI_URL);
+        if (model.type == UrlPageModel.TYPE_CATALOGPAGE) return getUsingUrl() + model.boardName + "/catalogue.html";
+        return WakabaUtils.buildUrl(model, getUsingUrl());
     }
 
     @Override

@@ -415,6 +415,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="crash_dialog_comment_prompt">Коротко про ваші дії:</string>
     <string name="crash_dialog_ok_toast">Дякуємо!</string>
     
+    <string name="iichan_prefs_domain">Домен</string>
+    <string name="iichan_prefs_domain_summary">Виберіть домен для завантаження</string>
     <string name="iichan_prefs_report_thread">Тред для скарг</string>
     <string name="iichan_prefs_report_thread_summary">Номер треду в /d/ для повідомлень про порушення</string>
     

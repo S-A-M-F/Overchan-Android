@@ -121,13 +121,13 @@ public class CirnoModule extends StormwallChanModule {
     
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
-        addHttpsPreference(preferenceGroup, false);
+        addHttpsPreference(preferenceGroup, true);
         
         final Context context = preferenceGroup.getContext();
         
         ListPreference domainPref = new ListPreference(context);
-        domainPref.setTitle("Домен");
-        domainPref.setSummary("Выберите домен для загрузки");
+        domainPref.setTitle(R.string.iichan_prefs_domain);
+        domainPref.setSummary(R.string.iichan_prefs_domain_summary);
         domainPref.setKey(getSharedKey(PREF_KEY_DOMAIN));
         domainPref.setEntries(IICHAN_DOMAINS.toArray(new CharSequence[IICHAN_DOMAINS.size()]));
         domainPref.setEntryValues(IICHAN_DOMAINS.toArray(new CharSequence[IICHAN_DOMAINS.size()]));
@@ -283,6 +283,14 @@ public class CirnoModule extends StormwallChanModule {
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
+            if ((response.statusCode == 301 || response.statusCode == 302) && response.locationHeader != null) {
+                if (url.startsWith("http://") && response.locationHeader.startsWith("https://") &&
+                        url.substring(7).equals(response.locationHeader.substring(8))) {
+                    throw new Exception(getDisplayingName() + " " + resources.getString(R.string.error_https_required));
+                }
+                response.release();
+                response = HttpStreamer.getInstance().getFromUrl(fixRelativeUrl(response.locationHeader), request, httpClient, null, task);
+            }
             if (response.statusCode == 303) {
                 for (Header header : response.headers) {
                     if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {

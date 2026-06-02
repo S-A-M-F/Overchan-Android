@@ -16,4 +16,5 @@ local.properties
 build/*
 *.iml
 my.keystore
+keystore.properties
 local/

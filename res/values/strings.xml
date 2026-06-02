@@ -383,6 +383,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_dialog_format">%s checking</string>
     <string name="error_interactive_cancelled_format">%s checking has not been passed</string>
     <string name="error_out_of_memory">Out of memory</string>
+    <string name="error_https_required">requires HTTPS - enable it in board settings</string>
     
     <string name="ssl_accept_cert">Accept Unknown Certificate?</string>
     <string name="ssl_trust_anchor">The server certificate is not signed by a known Certificate Authority.</string>
@@ -404,6 +405,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
     
+    <string name="iichan_prefs_domain">Domain</string>
+    <string name="iichan_prefs_domain_summary">Select a domain to load from</string>
     <string name="iichan_prefs_report_thread">Thread for reporting</string>
     <string name="iichan_prefs_report_thread_summary">Number of the thread in /d/ for reporting abuse</string>
     

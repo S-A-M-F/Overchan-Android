@@ -71,7 +71,7 @@ public class BulochkaModule extends AbstractKusabaModule {
 
     @Override
     protected boolean useHttpsDefaultValue() {
-        return false;
+        return true;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class BulochkaModule extends AbstractKusabaModule {
 
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
-        addHttpsPreference(preferenceGroup, false);
+        addHttpsPreference(preferenceGroup, true);
         super.addPreferencesOnScreen(preferenceGroup);
     }
 
@@ -131,6 +131,14 @@ public class BulochkaModule extends AbstractKusabaModule {
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
+            if (response.statusCode == 301 && response.locationHeader != null) {
+                if (url.startsWith("http://") && response.locationHeader.startsWith("https://") &&
+                        url.substring(7).equals(response.locationHeader.substring(8))) {
+                    throw new Exception(getDisplayingName() + " " + resources.getString(R.string.error_https_required));
+                }
+                response.release();
+                response = HttpStreamer.getInstance().getFromUrl(fixRelativeUrl(response.locationHeader), request, httpClient, null, task);
+            }
             if (response.statusCode == 302) {
                 String redirectUrl = response.locationHeader;
                 if (redirectUrl.length() == 0) throw new Exception();

@@ -681,5 +681,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Custom User-Agent string</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.2-samf-1: "Something, my instinct told me, was terribly wrong. All was not as it seemed."\n- HTTPS enabled by default for active chans\n- HTTP→HTTPS redirects during posting now show a descriptive error\n- Debug APK now coexists with release build\n- iichan domain labels extracted to localized strings\n- Merged feature branches: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing</string>
+    <string name="pref_changelog">1.9.2-samf-2: "Something, my instinct told me, was terribly wrong. All was not as it seemed."\n- HTTPS enabled by default for active chans\n- HTTP→HTTPS redirects during posting now show a descriptive error\n- Debug APK now coexists with release build\n- iichan domain labels extracted to localized strings\n- Merged feature branches: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- Fixed iichan HTTPS preference not applying on clean install</string>
 </resources>

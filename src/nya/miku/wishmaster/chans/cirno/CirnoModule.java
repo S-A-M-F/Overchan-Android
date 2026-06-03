@@ -112,7 +112,7 @@ public class CirnoModule extends StormwallChanModule {
     }
     
     private boolean useHttps() {
-        return useHttps(false);
+        return useHttps(true);
     }
     
     private String getUsingUrl() {

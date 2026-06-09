@@ -175,6 +175,7 @@ public class GensokyoModule extends AbstractChanModule {
 
     @Override
     public UrlPageModel parseUrl(String url) throws IllegalArgumentException {
+        url = url.replace("gensokyo.4otaku.ru", "gensokyo.4otaku.org");
         UrlPageModel model = WakabaUtils.parseUrl(url, CHAN_NAME, CHAN_DOMAIN);
         if (model.type == UrlPageModel.TYPE_OTHERPAGE && model.otherPath != null) {
             String p = model.otherPath.toLowerCase(java.util.Locale.US);
@@ -297,6 +298,14 @@ public class GensokyoModule extends AbstractChanModule {
     @Override
     public ThreadModel[] getCatalog(String boardName, int catalogType, ProgressListener listener, CancellableTask task, ThreadModel[] oldList) throws Exception {
         return new ThreadModel[0];
+    }
+
+    @Override
+    public String fixRelativeUrl(String url) {
+        if (url != null && url.startsWith("../../b/")) {
+            url = "/arch/b/" + url.substring(8);
+        }
+        return super.fixRelativeUrl(url);
     }
 
     @Override

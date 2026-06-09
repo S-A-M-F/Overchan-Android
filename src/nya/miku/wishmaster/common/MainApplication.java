@@ -82,6 +82,7 @@ public class MainApplication extends Application {
             "nya.miku.wishmaster.chans.cirno.CirnoArchiveModule",
             "nya.miku.wishmaster.chans.cirno.ZeroFourModule",
             "nya.miku.wishmaster.chans.cirno.BulochkaModule",
+            "nya.miku.wishmaster.chans.gensokyo.GensokyoModule",
     };
     
     private static MainApplication instance;

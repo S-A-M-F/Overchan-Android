@@ -4,13 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
 
@@ -24,6 +22,7 @@ import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.AbstractChanModule;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
+import nya.miku.wishmaster.api.models.AttachmentModel;
 import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.PostModel;
 import nya.miku.wishmaster.api.models.SimpleBoardModel;
@@ -165,6 +164,10 @@ public class GensokyoModule extends AbstractChanModule {
                 if (model.boardPage == UrlPageModel.DEFAULT_FIRST_PAGE) model.boardPage = 0;
                 return base + boardPath + "/" + (model.boardPage > 0 ? model.boardPage + ".html" : "");
             case UrlPageModel.TYPE_THREADPAGE:
+                if ("arch_b".equals(model.boardName) && model.threadNumber != null && !model.threadNumber.matches("\\d+")) {
+                    if ("index".equals(model.threadNumber)) return base + "arch/";
+                    return base + "arch/" + model.threadNumber + ".html";
+                }
                 return base + getThreadPath(model.boardName) + "/res/" + model.threadNumber + ".html";
             case UrlPageModel.TYPE_OTHERPAGE:
                 return base + (model.otherPath.startsWith("/") ? model.otherPath.substring(1) : model.otherPath);
@@ -183,6 +186,12 @@ public class GensokyoModule extends AbstractChanModule {
                 model.type = UrlPageModel.TYPE_CATALOGPAGE;
                 String path = p.replace("/catalog.html", "").replace("/catalogue.html", "");
                 model.boardName = getBoardForPath(path);
+                model.otherPath = null;
+            } else if (p.matches("arch/[^/]+\\.html")) {
+                String name = p.substring(5, p.length() - 5);
+                model.type = UrlPageModel.TYPE_THREADPAGE;
+                model.boardName = "arch_b";
+                model.threadNumber = name;
                 model.otherPath = null;
             }
         } else if (model.boardName != null) {
@@ -223,22 +232,25 @@ public class GensokyoModule extends AbstractChanModule {
         if ("arch_b".equals(boardName)) {
             if (page > 0) return new ThreadModel[0];
 
-            UrlPageModel urlModel = new UrlPageModel();
-            urlModel.chanName = CHAN_NAME;
-            urlModel.type = UrlPageModel.TYPE_BOARDPAGE;
-            urlModel.boardName = boardName;
-            urlModel.boardPage = page;
-            String url = buildUrl(urlModel);
+            ThreadModel thread = new ThreadModel();
+            thread.threadNumber = "index";
+            thread.postsCount = 1;
+            thread.attachmentsCount = 0;
+            thread.isSticky = true;
+            thread.posts = new PostModel[1];
+            thread.posts[0] = new PostModel();
+            thread.posts[0].number = "index";
+            thread.posts[0].subject = "\u0410\u0440\u0445\u0438\u0432 \u0442\u0440\u0435\u0434\u043e\u0432";
+            thread.posts[0].comment = "\u0421\u043f\u0438\u0441\u043e\u043a RPG \u0438\u0433\u0440 \u0430\u0440\u0445\u0438\u0432\u0430";
+            thread.posts[0].name = "";
+            thread.posts[0].op = true;
+            thread.posts[0].email = "";
+            thread.posts[0].trip = "";
+            thread.posts[0].parentThread = "index";
+            thread.posts[0].timestamp = 0;
+            thread.posts[0].attachments = new AttachmentModel[0];
 
-            byte[] bytes = getBytes(url, HttpRequestModel.builder().setGET().setCheckIfModified(oldList != null).build(), listener, task);
-            if (bytes == null) return oldList;
-
-            GensokyoRpgIndexReader reader = new GensokyoRpgIndexReader(new ByteArrayInputStream(bytes));
-            try {
-                return reader.readPage();
-            } finally {
-                reader.close();
-            }
+            return new ThreadModel[] { thread };
         }
 
         UrlPageModel urlModel = new UrlPageModel();
@@ -279,11 +291,17 @@ public class GensokyoModule extends AbstractChanModule {
                     reader.close();
                 }
             } else {
-                String url = getUsingUrl() + "arch/" + threadNumber + ".html";
-                byte[] bytes = getBytes(url, HttpRequestModel.DEFAULT_GET, listener, task);
+                UrlPageModel urlModel = new UrlPageModel();
+                urlModel.chanName = CHAN_NAME;
+                urlModel.type = UrlPageModel.TYPE_THREADPAGE;
+                urlModel.boardName = boardName;
+                urlModel.threadNumber = threadNumber;
+                String url = buildUrl(urlModel);
+
+                byte[] bytes = getBytes(url, HttpRequestModel.builder().setGET().setCheckIfModified(oldList != null).build(), listener, task);
                 if (bytes == null) return oldList;
 
-                GensokyoRpgGameReader reader = new GensokyoRpgGameReader(new ByteArrayInputStream(bytes));
+                GensokyoRpgPageReader reader = new GensokyoRpgPageReader(new ByteArrayInputStream(bytes));
                 try {
                     return reader.readPage();
                 } finally {

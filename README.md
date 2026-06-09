@@ -3,12 +3,12 @@
 Overchan Android (Meta Imageboard Client) is an application for browsing imageboards.
 
 [Website](http://miku-nyan.github.io/Overchan-Android/)  
-[Releases](https://github.com/miku-nyan/Overchan-Android/releases)  
+[Releases](https://github.com/S-A-M-F/Overchan-Android/releases)  
 [Google Play](https://play.google.com/store/apps/details?id=nya.miku.overchan) (without imageboards list)  
 [F-Droid](https://f-droid.org/repository/browse/?fdid=nya.miku.wishmaster)  
 [Version for ARC Runtime](https://yadi.sk/d/h_71bJRQjcdNm) (doesn't support [SO_KEEPALIVE](https://code.google.com/p/chromium/issues/detail?id=384940))  
 
-[Supported Imageboards](https://github.com/miku-nyan/Overchan-Android/blob/master/Imageboards.md)  
+[Supported Imageboards](https://github.com/S-A-M-F/Overchan-Android/blob/master/Imageboards.md)  
 [Custom Themes](https://github.com/miku-nyan/Overchan-Themes)
 
 ## Building Source Code

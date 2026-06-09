@@ -638,4 +638,17 @@ public class ApplicationSettings {
     public boolean widePopupDialogs(){
         return preferences.getBoolean(resources.getString(R.string.pref_key_wide_popup_dialogs), false);
     }
+
+    public String getDnsMode() {
+        return preferences.getString(resources.getString(R.string.pref_key_dns_mode),
+                resources.getString(R.string.pref_dns_mode_value_default));
+    }
+
+    public String getDohUrl() {
+        String url = preferences.getString(resources.getString(R.string.pref_key_doh_url), null);
+        if (url == null || url.length() == 0) {
+            return resources.getString(R.string.pref_doh_url_hint);
+        }
+        return url;
+    }
 }

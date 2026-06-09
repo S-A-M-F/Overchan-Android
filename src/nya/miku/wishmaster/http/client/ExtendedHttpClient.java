@@ -35,6 +35,7 @@ import cz.msebera.android.httpclient.client.config.CookieSpecs;
 import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.impl.client.BasicCookieStore;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 /**
@@ -158,6 +159,7 @@ public class ExtendedHttpClient extends HttpClientWrapper {
                 setProxy(proxy).
                 setDefaultCookieStore(cookieStore).
                 setSSLSocketFactory(ExtendedSSLSocketFactory.getSocketFactory()).
+                setDnsResolver(DohResolver.getInstance()).
                 build();
     }
 }

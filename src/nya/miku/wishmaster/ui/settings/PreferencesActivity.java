@@ -217,6 +217,21 @@ public class PreferencesActivity extends PreferenceActivity {
             }
         });
         
+        updateListSummary(R.string.pref_key_dns_mode);
+
+        final Preference dnsMismatchPreference = getPreferenceManager().findPreference(getString(R.string.pref_key_dns_mismatch_clear));
+        updateDnsMismatchSummary(dnsMismatchPreference);
+        dnsMismatchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MainApplication.getInstance().preferences.edit()
+                        .putString(getString(R.string.pref_key_dns_mismatch_domains), "")
+                        .apply();
+                dnsMismatchPreference.setSummary(getString(R.string.pref_dns_mismatch_empty));
+                return true;
+            }
+        });
+
         getPreferenceManager().findPreference(getString(R.string.pref_key_cache_maxsize)).setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
             @Override
@@ -289,6 +304,15 @@ public class PreferencesActivity extends PreferenceActivity {
                     } else if (getString(R.string.pref_key_chans_order_json).equals(key)) {
                         MainApplication.getInstance().updateChanModulesOrder();
                         updateChansScreen((PreferenceScreen) getPreferenceManager().findPreference(getString(R.string.pref_key_cat_chans)));
+                    } else if (getString(R.string.pref_key_dns_mode).equals(key)) {
+                        Preference dnsModePref = getPreferenceManager().findPreference(key);
+                        if (dnsModePref instanceof ListPreference) {
+                            updateListSummary(key);
+                        }
+                    } else if (getString(R.string.pref_key_dns_mismatch_domains).equals(key)) {
+                        Preference mismatchPref = getPreferenceManager().findPreference(
+                                getString(R.string.pref_key_dns_mismatch_clear));
+                        if (mismatchPref != null) updateDnsMismatchSummary(mismatchPref);
                     }
                 }
             }
@@ -299,6 +323,17 @@ public class PreferencesActivity extends PreferenceActivity {
             ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_cat_advanced))).removePreference(p);
         }
         
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
+            PreferenceGroup advancedCat = (PreferenceGroup) getPreferenceManager().findPreference(
+                    getString(R.string.pref_key_cat_advanced));
+            Preference dnsMode = getPreferenceManager().findPreference(getString(R.string.pref_key_dns_mode));
+            Preference dohUrl = getPreferenceManager().findPreference(getString(R.string.pref_key_doh_url));
+            Preference mismatch = getPreferenceManager().findPreference(getString(R.string.pref_key_dns_mismatch_clear));
+            if (dnsMode != null) advancedCat.removePreference(dnsMode);
+            if (dohUrl != null) advancedCat.removePreference(dohUrl);
+            if (mismatch != null) advancedCat.removePreference(mismatch);
+        }
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1) {
             Preference p = getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_scaleimageview));
             ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_screen))).removePreference(p);
@@ -356,6 +391,21 @@ public class PreferencesActivity extends PreferenceActivity {
     private void updateListSummary(String prefKey) {
         ListPreference preference = (ListPreference) getPreferenceManager().findPreference(prefKey);
         preference.setSummary(preference.getEntry());
+    }
+
+    private void updateDnsMismatchSummary(Preference preference) {
+        String domains = MainApplication.getInstance().preferences.getString(
+                getString(R.string.pref_key_dns_mismatch_domains), "");
+        if (domains == null || domains.length() == 0) {
+            preference.setSummary(getString(R.string.pref_dns_mismatch_empty));
+        } else {
+            String[] parts = domains.split(",");
+            int count = 0;
+            for (String p : parts) {
+                if (p.length() > 0) count++;
+            }
+            preference.setSummary(count + " " + getString(R.string.pref_dns_mismatch_title));
+        }
     }
     
     private void updateChansScreen(final PreferenceScreen chansCat) {

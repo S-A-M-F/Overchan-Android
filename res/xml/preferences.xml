@@ -223,6 +223,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:title="@string/pref_ssl_certificates_title"
             android:summary="@string/pref_ssl_certificates_summary" />
         
+        <ListPreference
+            android:key="@string/pref_key_dns_mode"
+            android:title="@string/pref_dns_mode_title"
+            android:summary="@string/pref_dns_mode_summary"
+            android:dialogTitle="@string/pref_dns_mode_dialogtitle"
+            android:entries="@array/pref_dns_mode_choices"
+            android:entryValues="@array/pref_dns_mode_values"
+            android:defaultValue="@string/pref_dns_mode_value_default" />
+        
+        <EditTextPreference
+            android:key="@string/pref_key_doh_url"
+            android:title="@string/pref_doh_url_title"
+            android:summary="@string/pref_doh_url_summary"
+            android:dialogTitle="@string/pref_doh_url_dialogtitle"
+            android:hint="@string/pref_doh_url_hint"
+            android:inputType="textUri"
+            android:singleLine="true"
+            android:defaultValue="@string/pref_doh_url_hint" />
+
+        <Preference
+            android:key="@string/pref_key_dns_mismatch_clear"
+            android:title="@string/pref_dns_mismatch_clear_title"
+            android:summary="@string/pref_dns_mismatch_empty" />
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key_safe_posting"

@@ -33,6 +33,7 @@ import nya.miku.wishmaster.cache.FileCache;
 import nya.miku.wishmaster.cache.PagesCache;
 import nya.miku.wishmaster.cache.Serializer;
 import nya.miku.wishmaster.http.SSLCompatibility;
+import nya.miku.wishmaster.http.client.DohResolver;
 import nya.miku.wishmaster.http.client.ExtendedTrustManager;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
 import nya.miku.wishmaster.lib.org_json.JSONArray;
@@ -190,6 +191,19 @@ public class MainApplication extends Application {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         resources = this.getResources();
         settings = new ApplicationSettings(preferences, resources);
+        DohResolver.init();
+
+        preferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                String dnsModeKey = resources.getString(R.string.pref_key_dns_mode);
+                String dohUrlKey = resources.getString(R.string.pref_key_doh_url);
+                if (key.equals(dnsModeKey) || key.equals(dohUrlKey)) {
+                    DohResolver.getInstance().clearCache();
+                }
+            }
+        });
+
         fileCache = new FileCache(this, settings.getMaxCacheSize());
         serializer = new Serializer(fileCache);
         tabsState = serializer.deserializeTabsState();

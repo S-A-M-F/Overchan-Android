@@ -2,6 +2,13 @@
 -dontwarn java.beans.**
 -dontwarn sun.nio.ch.**
 -dontwarn sun.misc.**
+-dontwarn javax.annotation.**
+-dontwarn java.time.**
+-dontwarn org.codehaus.mojo.animal_sniffer.**
+-dontwarn android.net.ssl.**
+-dontwarn org.conscrypt.**
+-dontwarn java.nio.file.**
+-dontwarn okhttp3.internal.platform.Android10Platform
 -keep,allowshrinking class ** { *; }
 -keep class nya.miku.** { *; }
 -keep class org.acra.** { *; }

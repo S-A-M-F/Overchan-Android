@@ -697,4 +697,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_summary">Персональний User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
     <string name="pref_changelog">1.9.2-samf-2: «Чуття підказувало мені — тут щось не те. Все було не тим, чим здавалося.»\n- HTTPS увімкнено за замовчуванням для активних чанів\n- Перенаправлення HTTP→HTTPS при надсиланні тепер показують зрозумілу помилку\n- Відлагоджувальна збірка тепер співіснує з релізною\n- Назви доменів iichan винесено в локалізовані рядки\n- Злито гілки функцій: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- Виправлено застосування налаштування HTTPS для iichan при чистому встановленні</string>
+
+    <string name="pref_dns_mode_title">Режим розпізнавання DNS</string>
+    <string name="pref_dns_mode_summary">Як виконується розпізнавання DNS (потрібно Android 2.3+)</string>
+    <string name="pref_dns_mode_dialogtitle">Режим розпізнавання DNS</string>
+    <string-array name="pref_dns_mode_choices">
+        <item>Лише системний DNS</item>
+        <item>DoH із резервним системним DNS</item>
+        <item>DoH та системний DNS (порівняння)</item>
+        <item>Лише DoH (суворий)</item>
+    </string-array>
+    <string name="pref_dns_mode_system_only_summary">Використовувати системний DNS-резольвер (поточна поведінка)</string>
+    <string name="pref_dns_mode_doh_fallback_summary">Розпізнавати через DNS-over-HTTPS, у разі невдачі переходити на системний DNS</string>
+    <string name="pref_dns_mode_doh_compare_summary">Розпізнавати через DoH та системний DNS; довіряти DoH; попереджати про розбіжності</string>
+    <string name="pref_dns_mode_doh_strict_summary">Розпізнавати лише через DNS-over-HTTPS; без резервного варіанту</string>
+    <string name="pref_doh_url_title">URL DoH-сервера</string>
+    <string name="pref_doh_url_summary">Точка доступу DNS-over-HTTPS (за замовчуванням: Cloudflare)</string>
+    <string name="pref_doh_url_dialogtitle">URL DoH-сервера</string>
+    <string name="pref_dns_mismatch_title">Журнал розбіжностей DNS</string>
+    <string name="pref_dns_mismatch_summary">Домени, у яких DoH та системний DNS розійшлися</string>
+    <string name="pref_dns_mismatch_clear_title">Очистити журнал розбіжностей</string>
+    <string name="pref_dns_mismatch_empty">Розбіжностей не виявлено</string>
+    <string name="dns_mismatch_toast_format">Виявлено розбіжність DNS для %s — ваш провайдер може підміняти DNS</string>
 </resources>

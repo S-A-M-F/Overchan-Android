@@ -683,28 +683,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Custom User-Agent string</string>
 
-    <string name="pref_dns_mode_title" translatable="false">DNS resolution mode</string>
-    <string name="pref_dns_mode_summary" translatable="false">How DNS lookups are performed (requires Android 2.3+)</string>
-    <string name="pref_dns_mode_dialogtitle" translatable="false">DNS resolution mode</string>
-    <string-array name="pref_dns_mode_choices" translatable="false">
+    <string name="pref_dns_mode_title">DNS resolution mode</string>
+    <string name="pref_dns_mode_summary">How DNS lookups are performed (requires Android 2.3+)</string>
+    <string name="pref_dns_mode_dialogtitle">DNS resolution mode</string>
+    <string-array name="pref_dns_mode_choices">
         <item>System only</item>
         <item>DoH with system fallback</item>
         <item>DoH and system (compare)</item>
         <item>DoH only (strict)</item>
     </string-array>
-    <string name="pref_dns_mode_system_only_summary" translatable="false">Use the system DNS resolver (current behaviour)</string>
-    <string name="pref_dns_mode_doh_fallback_summary" translatable="false">Resolve via DNS-over-HTTPS, fall back to system DNS on failure</string>
-    <string name="pref_dns_mode_doh_compare_summary" translatable="false">Resolve via both DoH and system DNS; trust DoH; warn if results differ</string>
-    <string name="pref_dns_mode_doh_strict_summary" translatable="false">Resolve exclusively via DNS-over-HTTPS; fail if unavailable</string>
-    <string name="pref_doh_url_title" translatable="false">DoH server URL</string>
-    <string name="pref_doh_url_summary" translatable="false">DNS-over-HTTPS endpoint (default: Cloudflare)</string>
-    <string name="pref_doh_url_dialogtitle" translatable="false">DoH server URL</string>
+    <string name="pref_dns_mode_system_only_summary">Use the system DNS resolver (current behaviour)</string>
+    <string name="pref_dns_mode_doh_fallback_summary">Resolve via DNS-over-HTTPS, fall back to system DNS on failure</string>
+    <string name="pref_dns_mode_doh_compare_summary">Resolve via both DoH and system DNS; trust DoH; warn if results differ</string>
+    <string name="pref_dns_mode_doh_strict_summary">Resolve exclusively via DNS-over-HTTPS; fail if unavailable</string>
+    <string name="pref_doh_url_title">DoH server URL</string>
+    <string name="pref_doh_url_summary">DNS-over-HTTPS endpoint (default: Cloudflare)</string>
+    <string name="pref_doh_url_dialogtitle">DoH server URL</string>
     <string name="pref_doh_url_hint" translatable="false">https://cloudflare-dns.com/dns-query</string>
-    <string name="pref_dns_mismatch_title" translatable="false">DNS mismatch log</string>
-    <string name="pref_dns_mismatch_summary" translatable="false">Domains where DoH and system DNS disagreed</string>
-    <string name="pref_dns_mismatch_clear_title" translatable="false">Clear mismatch log</string>
-    <string name="pref_dns_mismatch_empty" translatable="false">No mismatches detected</string>
-    <string name="dns_mismatch_toast_format" translatable="false">DNS mismatch detected for %s — your provider may be spoofing DNS</string>
+    <string name="pref_dns_mismatch_title">DNS mismatch log</string>
+    <string name="pref_dns_mismatch_summary">Domains where DoH and system DNS disagreed</string>
+    <string name="pref_dns_mismatch_clear_title">Clear mismatch log</string>
+    <string name="pref_dns_mismatch_empty">No mismatches detected</string>
+    <string name="dns_mismatch_toast_format">DNS mismatch detected for %s — your provider may be spoofing DNS</string>
 
     <string name="pref_makaba_passcode">Passcode</string>
     <string name="pref_changelog">1.9.2-samf-2: "Something, my instinct told me, was terribly wrong. All was not as it seemed."\n- HTTPS enabled by default for active chans\n- HTTP→HTTPS redirects during posting now show a descriptive error\n- Debug APK now coexists with release build\n- iichan domain labels extracted to localized strings\n- Merged feature branches: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- Fixed iichan HTTPS preference not applying on clean install</string>

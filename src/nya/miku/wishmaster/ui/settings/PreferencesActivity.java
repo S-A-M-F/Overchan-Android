@@ -224,10 +224,28 @@ public class PreferencesActivity extends PreferenceActivity {
         dnsMismatchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                MainApplication.getInstance().preferences.edit()
-                        .putString(getString(R.string.pref_key_dns_mismatch_domains), "")
-                        .apply();
-                dnsMismatchPreference.setSummary(getString(R.string.pref_dns_mismatch_empty));
+                final String domains = MainApplication.getInstance().preferences.getString(
+                        getString(R.string.pref_key_dns_mismatch_domains), "");
+                if (domains == null || domains.length() == 0) return true;
+                String[] parts = domains.split(",");
+                StringBuilder sb = new StringBuilder();
+                for (String p : parts) {
+                    if (p.length() > 0) sb.append("• ").append(p).append("\n");
+                }
+                new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle(R.string.pref_dns_mismatch_title)
+                        .setMessage(sb.toString().trim())
+                        .setPositiveButton(R.string.pref_dns_mismatch_clear_title, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                MainApplication.getInstance().preferences.edit()
+                                        .putString(getString(R.string.pref_key_dns_mismatch_domains), "")
+                                        .apply();
+                                updateDnsMismatchSummary(dnsMismatchPreference);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
                 return true;
             }
         });
@@ -376,6 +394,9 @@ public class PreferencesActivity extends PreferenceActivity {
             themePreference.setValue(currentValue);
             updateListSummary(R.string.pref_key_theme);
         }
+
+        Preference dnsMismatchPref = getPreferenceManager().findPreference(getString(R.string.pref_key_dns_mismatch_clear));
+        if (dnsMismatchPref != null) updateDnsMismatchSummary(dnsMismatchPref);
     }
 
     @Override
@@ -400,11 +421,20 @@ public class PreferencesActivity extends PreferenceActivity {
             preference.setSummary(getString(R.string.pref_dns_mismatch_empty));
         } else {
             String[] parts = domains.split(",");
+            StringBuilder sb = new StringBuilder();
             int count = 0;
             for (String p : parts) {
-                if (p.length() > 0) count++;
+                if (p.length() == 0) continue;
+                count++;
+                if (count <= 2) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(p);
+                }
             }
-            preference.setSummary(count + " " + getString(R.string.pref_dns_mismatch_title));
+            if (count > 2) {
+                sb.append(", +").append(count - 2).append(" more");
+            }
+            preference.setSummary(sb.toString());
         }
     }
     

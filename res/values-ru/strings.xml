@@ -693,4 +693,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_summary">Персональный User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
     <string name="pref_changelog">1.9.2-samf-2: «Я интуитивно чувствовал: что-то тут не так, всё не то, чем кажется.»\n- HTTPS включён по умолчанию для активных чанов\n- Перенаправления HTTP→HTTPS при отправке теперь показывают понятную ошибку\n- Отладочная сборка теперь сосуществует с релизной\n- Названия доменов iichan вынесены в локализованные строки\n- Слиты ветки функций: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- Исправлено применение настройки HTTPS для iichan при чистой установке</string>
+
+    <string name="pref_dns_mode_title">Режим разрешения DNS</string>
+    <string name="pref_dns_mode_summary">Как выполняется разрешение DNS (требуется Android 2.3+)</string>
+    <string name="pref_dns_mode_dialogtitle">Режим разрешения DNS</string>
+    <string-array name="pref_dns_mode_choices">
+        <item>Только системный DNS</item>
+        <item>DoH с запасным системным DNS</item>
+        <item>DoH и системный DNS (сравнение)</item>
+        <item>Только DoH (строгий)</item>
+    </string-array>
+    <string name="pref_dns_mode_system_only_summary">Использовать системный DNS-резольвер (текущее поведение)</string>
+    <string name="pref_dns_mode_doh_fallback_summary">Разрешать через DNS-over-HTTPS, при сбое переходить на системный DNS</string>
+    <string name="pref_dns_mode_doh_compare_summary">Разрешать через DoH и системный DNS; доверять DoH; предупреждать при расхождениях</string>
+    <string name="pref_dns_mode_doh_strict_summary">Разрешать только через DNS-over-HTTPS; без запасного варианта</string>
+    <string name="pref_doh_url_title">URL DoH-сервера</string>
+    <string name="pref_doh_url_summary">DNS-over-HTTPS endpoint (по умолчанию: Cloudflare)</string>
+    <string name="pref_doh_url_dialogtitle">URL DoH-сервера</string>
+    <string name="pref_dns_mismatch_title">Журнал расхождений DNS</string>
+    <string name="pref_dns_mismatch_summary">Домены, в которых DoH и системный DNS разошлись</string>
+    <string name="pref_dns_mismatch_clear_title">Очистить журнал расхождений</string>
+    <string name="pref_dns_mismatch_empty">Расхождений не обнаружено</string>
+    <string name="dns_mismatch_toast_format">Обнаружено расхождение DNS для %s — ваш провайдер может подменять DNS</string>
 </resources>

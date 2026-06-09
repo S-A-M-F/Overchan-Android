@@ -491,6 +491,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_title">Пошта</string>
     <string name="pref_email_summary">Адреса електронної пошти</string>
     <string name="pref_email_hint">sage</string>
+    <string name="pref_show_personal_title">Завжди показувати ім\'я та email</string>
+    <string name="pref_show_personal_summary">Показувати поля особистих даних незалежно від глобального налаштування</string>
     <string name="pref_hide_personal_title">Ховати блок особистих даних</string>
     <string name="pref_hide_personal_summary">Завжди використовувати типові значення</string>
     <string name="pref_ssl_certificates_title">SSL сертифікати</string>

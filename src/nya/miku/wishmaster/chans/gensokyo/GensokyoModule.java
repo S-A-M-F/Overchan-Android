@@ -2,13 +2,19 @@ package nya.miku.wishmaster.chans.gensokyo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpHeaders;
 import cz.msebera.android.httpclient.cookie.Cookie;
 import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
 
@@ -25,12 +31,16 @@ import nya.miku.wishmaster.api.interfaces.ProgressListener;
 import nya.miku.wishmaster.api.models.AttachmentModel;
 import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.PostModel;
+import nya.miku.wishmaster.api.models.SendPostModel;
 import nya.miku.wishmaster.api.models.SimpleBoardModel;
 import nya.miku.wishmaster.api.models.ThreadModel;
 import nya.miku.wishmaster.api.models.UrlPageModel;
+import nya.miku.wishmaster.api.util.ChanModels;
 import nya.miku.wishmaster.api.util.WakabaReader;
 import nya.miku.wishmaster.api.util.WakabaUtils;
 import nya.miku.wishmaster.common.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import nya.miku.wishmaster.http.ExtendedMultipartBuilder;
 import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpResponseModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
@@ -42,6 +52,8 @@ public class GensokyoModule extends AbstractChanModule {
 
     private static final String PREF_KEY_COOKIES = "GENSOKYO_COOKIES";
     private static final DateFormat ARCHIVE_DATE_FORMAT = new SimpleDateFormat("EEE dd MMMM yyyy HH:mm:ss", new Locale("ru"));
+    private static final DateFormat KUSABA_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
+    private static final Pattern ERROR_POSTING = Pattern.compile("<h2(?:[^>]*)>(.*?)</h2>", Pattern.DOTALL);
 
     private boolean useHttps() {
         return useHttps(true);
@@ -75,6 +87,7 @@ public class GensokyoModule extends AbstractChanModule {
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
         addHttpsPreference(preferenceGroup, true);
+        addShowPersonalDataPreference(preferenceGroup, false);
         super.addPreferencesOnScreen(preferenceGroup);
     }
 
@@ -147,7 +160,15 @@ public class GensokyoModule extends AbstractChanModule {
 
     @Override
     public BoardModel getBoard(String shortName, ProgressListener listener, CancellableTask task) throws Exception {
-        return GensokyoBoards.getBoard(shortName);
+        BoardModel board = GensokyoBoards.getBoard(shortName);
+        if ("b".equals(shortName)) {
+            board.timeZoneId = "UTC";
+            board.allowSage = true;
+            board.allowEmails = true;
+            board.ignoreEmailIfSage = true;
+            board.allowReport = BoardModel.REPORT_WITH_COMMENT;
+        }
+        return board;
     }
 
     @Override
@@ -219,6 +240,8 @@ public class GensokyoModule extends AbstractChanModule {
                 persistCookies();
                 checkBarrier(bytes);
                 return bytes;
+            } else if (response.notModified()) {
+                return null;
             } else {
                 throw new HttpWrongStatusCodeException(response.statusCode, response.statusCode + " - " + response.statusReason);
             }
@@ -263,7 +286,12 @@ public class GensokyoModule extends AbstractChanModule {
         byte[] bytes = getBytes(url, HttpRequestModel.builder().setGET().setCheckIfModified(oldList != null).build(), listener, task);
         if (bytes == null) return oldList;
 
-        return new ThreadModel[0];
+        GensokyoKusabaReader reader = new GensokyoKusabaReader(new ByteArrayInputStream(bytes), KUSABA_DATE_FORMAT);
+        try {
+            return reader.readWakabaPage();
+        } finally {
+            reader.close();
+        }
     }
 
     @Override
@@ -309,13 +337,78 @@ public class GensokyoModule extends AbstractChanModule {
                 }
             }
         }
+        UrlPageModel urlModel = new UrlPageModel();
+        urlModel.chanName = CHAN_NAME;
+        urlModel.type = UrlPageModel.TYPE_THREADPAGE;
+        urlModel.boardName = boardName;
+        urlModel.threadNumber = threadNumber;
+        String url = buildUrl(urlModel);
 
-        return new PostModel[0];
+        byte[] bytes = getBytes(url, HttpRequestModel.builder().setGET().setCheckIfModified(oldList != null).build(), listener, task);
+        if (bytes == null) return oldList;
+
+        GensokyoKusabaReader reader = new GensokyoKusabaReader(new ByteArrayInputStream(bytes), KUSABA_DATE_FORMAT);
+        try {
+            ThreadModel[] threads = reader.readWakabaPage();
+            if (threads.length > 0 && threads[0].posts != null) {
+                return oldList == null ? threads[0].posts : ChanModels.mergePostsLists(Arrays.asList(oldList), Arrays.asList(threads[0].posts));
+            }
+            return new PostModel[0];
+        } finally {
+            reader.close();
+        }
     }
 
     @Override
     public ThreadModel[] getCatalog(String boardName, int catalogType, ProgressListener listener, CancellableTask task, ThreadModel[] oldList) throws Exception {
         return new ThreadModel[0];
+    }
+
+    @Override
+    public String sendPost(SendPostModel model, ProgressListener listener, CancellableTask task) throws Exception {
+        String url = getUsingUrl() + "curr/board.php";
+        ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task);
+        postEntityBuilder.
+            addString("board", model.boardName).
+            addString("replythread", model.threadNumber == null ? "0" : model.threadNumber).
+            addString("name", model.name).
+            addString("em", model.sage ? "sage" : model.email).
+            addString("subject", model.subject).
+            addString("message", model.comment);
+        if (model.attachments != null && model.attachments.length > 0) {
+            postEntityBuilder.addFile("imagefile", model.attachments[0], model.randomHash);
+            if (model.custommark) postEntityBuilder.addString("spoiler", "on");
+        } else if (model.threadNumber == null) {
+            postEntityBuilder.addString("nofile", "on");
+        }
+        postEntityBuilder.addString("postpassword", model.password);
+
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).setNoRedirect(true).build();
+        HttpResponseModel response = null;
+        try {
+            response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
+            persistCookies();
+            if (response.statusCode == 302) {
+                for (Header header : response.headers) {
+                    if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
+                        return fixRelativeUrl(header.getValue());
+                    }
+                }
+            } else if (response.statusCode == 200) {
+                ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
+                IOUtils.copyStream(response.stream, output);
+                byte[] bytes = output.toByteArray();
+                checkBarrier(bytes);
+                String htmlResponse = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+                Matcher errorMatcher = ERROR_POSTING.matcher(htmlResponse);
+                if (errorMatcher.find()) throw new Exception(errorMatcher.group(1).trim());
+            } else {
+                throw new Exception(response.statusCode + " - " + response.statusReason);
+            }
+        } finally {
+            if (response != null) response.release();
+        }
+        return null;
     }
 
     @Override
@@ -330,5 +423,16 @@ public class GensokyoModule extends AbstractChanModule {
     public void downloadFile(String url, java.io.OutputStream out, ProgressListener listener, CancellableTask task) throws Exception {
         String fixedUrl = fixRelativeUrl(url);
         HttpStreamer.getInstance().downloadFileFromUrl(fixedUrl, out, HttpRequestModel.DEFAULT_GET, httpClient, listener, task, false);
+    }
+
+    private static class GensokyoKusabaReader extends WakabaReader {
+        GensokyoKusabaReader(InputStream in, DateFormat dateFormat) {
+            super(in, dateFormat, false);
+        }
+        @Override
+        protected void parseDate(String date) {
+            date = StringEscapeUtils.unescapeHtml4(date).replace('\u00A0', ' ').trim();
+            super.parseDate(date);
+        }
     }
 }

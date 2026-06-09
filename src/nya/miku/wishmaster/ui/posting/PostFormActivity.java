@@ -534,7 +534,10 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
         sendButton.setOnClickListener(this);
         sendButton.setOnLongClickListener(this);
         
-        if (settings.isHidePersonalData()) {
+        boolean hidePersonalData = settings.isHidePersonalData();
+        if (hidePersonalData && chan instanceof AbstractChanModule && ((AbstractChanModule) chan).isShowPersonalData())
+            hidePersonalData = false;
+        if (hidePersonalData) {
             nameLayout.setVisibility(View.GONE);
             passwordLayout.setVisibility(View.GONE);
         } else {
@@ -615,6 +618,8 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     
     private void saveSendPostModel() {
         boolean hidePersonalData = settings.isHidePersonalData();
+        if (hidePersonalData && chan instanceof AbstractChanModule && ((AbstractChanModule) chan).isShowPersonalData())
+            hidePersonalData = false;
         sendPostModel.name = hidePersonalData && boardModel.allowNames ? settings.getDefaultName() : nameField.getText().toString();
         sendPostModel.subject = subjectField.getText().toString();
         sendPostModel.email = hidePersonalData && boardModel.allowEmails ? settings.getDefaultEmail() : emailField.getText().toString();

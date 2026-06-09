@@ -76,6 +76,7 @@ public abstract class AbstractChanModule implements HttpChanModule {
     protected static final String PREF_KEY_USE_HTTPS = "PREF_KEY_USE_HTTPS";
     protected static final String PREF_KEY_ONLY_NEW_POSTS = "PREF_KEY_ONLY_NEW_POSTS";
     protected static final String PREF_KEY_CAPTCHA_AUTO_UPDATE = "PREF_KEY_CAPTCHA_AUTO_UPDATE";
+    protected static final String PREF_KEY_SHOW_PERSONAL = "PREF_KEY_SHOW_PERSONAL";
 
     /**
      * Основной HTTP-клиент
@@ -348,6 +349,25 @@ public abstract class AbstractChanModule implements HttpChanModule {
      */
     protected boolean loadOnlyNewPosts(boolean defaultValue) {
         return preferences.getBoolean(getSharedKey(PREF_KEY_ONLY_NEW_POSTS), defaultValue);
+    }
+    
+    protected CheckBoxPreference addShowPersonalDataPreference(PreferenceGroup group, boolean defaultValue) {
+        final Context context = group.getContext();
+        CheckBoxPreference showPersonalPref = new LazyPreferences.CheckBoxPreference(context);
+        showPersonalPref.setTitle(R.string.pref_show_personal_title);
+        showPersonalPref.setSummary(R.string.pref_show_personal_summary);
+        showPersonalPref.setKey(getSharedKey(PREF_KEY_SHOW_PERSONAL));
+        showPersonalPref.setDefaultValue(defaultValue);
+        group.addPreference(showPersonalPref);
+        return showPersonalPref;
+    }
+    
+    protected boolean isShowPersonalData(boolean defaultValue) {
+        return preferences.getBoolean(getSharedKey(PREF_KEY_SHOW_PERSONAL), defaultValue);
+    }
+    
+    public boolean isShowPersonalData() {
+        return isShowPersonalData(false);
     }
     
     private boolean createPassword() {

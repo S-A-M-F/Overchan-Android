@@ -481,6 +481,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_title">E-mail</string>
     <string name="pref_email_summary">E-Mail-Adresse standardmäßig</string>
     <string name="pref_email_hint">email</string>
+    <string name="pref_show_personal_title">Name und E-Mail immer anzeigen</string>
+    <string name="pref_show_personal_summary">Persönliche Datenfelder unabhängig von der globalen Einstellung anzeigen</string>
     <string name="pref_hide_personal_title">Persönliche Daten verbergen</string>
     <string name="pref_hide_personal_summary">Immer die Standardwerte verwenden</string>
     <string name="pref_ssl_certificates_title">SSL-Zertifikate</string>

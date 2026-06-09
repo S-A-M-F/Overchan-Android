@@ -488,6 +488,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_title">E-mail</string>
     <string name="pref_email_summary">Адрес E-mail по умолчанию</string>
     <string name="pref_email_hint">email</string>
+    <string name="pref_show_personal_title">Всегда показывать имя и email</string>
+    <string name="pref_show_personal_summary">Показывать поля личных данных независимо от глобальной настройки</string>
     <string name="pref_hide_personal_title">Скрывать блок личных данных</string>
     <string name="pref_hide_personal_summary">Всегда использовать значения по умолчанию</string>
     <string name="pref_ssl_certificates_title">SSL сертификаты</string>

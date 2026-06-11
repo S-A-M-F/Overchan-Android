@@ -1,43 +1,47 @@
+## ATTENTION!!!
+
+This app - and many more - can end up nearly completely impossible to use in barely a few months for nearly all the modern Android users. _Thank Google for that._
+[More info here](https://keepandroidopen.org/)
+
 ## Overchan Android
 
 Overchan Android (Meta Imageboard Client) is an application for browsing imageboards.
 
-[Website](http://miku-nyan.github.io/Overchan-Android/)  
 [Releases](https://github.com/S-A-M-F/Overchan-Android/releases)  
-[Google Play](https://play.google.com/store/apps/details?id=nya.miku.overchan) (without imageboards list)  
-[F-Droid](https://f-droid.org/repository/browse/?fdid=nya.miku.wishmaster)  
-[Version for ARC Runtime](https://yadi.sk/d/h_71bJRQjcdNm) (doesn't support [SO_KEEPALIVE](https://code.google.com/p/chromium/issues/detail?id=384940))  
+[F-Droid](https://f-droid.org/repository/browse/?fdid=nya.miku.wishmaster) Currently deprecated - may change in future.
 
 [Supported Imageboards](https://github.com/S-A-M-F/Overchan-Android/blob/master/Imageboards.md)  
-[Custom Themes](https://github.com/miku-nyan/Overchan-Themes)
+[Custom Themes](https://github.com/S-A-M-F/Overchan-Themes)
+
+## Acknowledgements
+
+* **[Miku Nyan](https://github.com/miku-nyan)** — original creator of Overchan Android
+* **[Eilhart](https://github.com/Eilhart)** — long-term maintenance and countless improvements
+* **[AliceCA](https://github.com/AliceCA)** — significant contributions over the years
+* **[Anonymous](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** — one that never forgets of forgives - and not forgotten either
+* **Kiririn**, **Kalaver**, **Kantrael**, **Sich**, **Weloxux**, **xD**, **Pwnicorn**, **Keiran Rowan**, **Andrey Bogdanov**, **hey-red**, **Klaster_1**, **Kohlchan**, **rngnrs**, **Chinese Dog** — you all were here at some point
 
 ## Building Source Code
 
 ### Dependencies
 
-* [JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (JRE alone is not sufficient)
+* [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (JRE alone is not sufficient)
 * [Android SDK](https://developer.android.com/sdk/index.html#Other)
 * [Android NDK](https://developer.android.com/tools/sdk/ndk/index.html#Downloads)
-* [Apache Ant](http://ant.apache.org/bindownload.cgi) or [Eclipse with ADT](http://developer.android.com/sdk/installing/installing-adt.html)
 
-### Using Ant
+### Using Gradle / Android Studio
 
 Open the source code directory and run (in the command line):
 
-`ant -Dsdk.dir=/path/to/android-sdk -Dndk.dir=/path/to/android-ndk debug`
+`gradlew.bat build`
 
-The .apk file (`bin/Overchan-debug.apk`) will be signed with the debug key.
+Or import into **Android Studio** (File → New → Import Project).
 
-*Note for Windows platforms:*  
-NDK path cannot contain any spaces but you can use the short name of the path (example: `C:\Program Files` → `C:\PROGRA~1`). The short directory name can be found using `dir /x` (example: `dir /x c:\`)
+The Gradle wrapper (`gradlew.bat`) will download the correct Gradle version automatically. The debug APK will be signed with the debug key.
 
-### Using Eclipse with ADT
+For a release build:
 
-Just import the project into your workspace (File → Import → Android → Existing Android code into workspace → select the folder).
-
-### Android Studio/IntelliJ IDEA/Gradle
-
-You may use Android Studio/IntelliJ IDEA at your own risk. The gradle build script is included.
+`gradlew.bat assembleRelease`
 
 ## License
 

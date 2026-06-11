@@ -597,6 +597,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_update_on_startup_summary">Aber nicht mehr als einmal am Tag</string>
     <string name="pref_update_allow_beta_title">Erlaube Beta-Versionen</string>
     <string name="pref_update_allow_beta_summary">Erlaube die Installation von Beta-Versionen</string>
+    <string name="pref_update_check_now_title">Jetzt nach Updates suchen</string>
+    <string name="pref_update_check_now_summary">Manuell nach neuen Versionen suchen</string>
     <string name="pref_about_version_title">Overchan Android</string>
     <string name="pref_about_license_title">Lizenz</string>
     <string name="pref_about_license_summary">GPLv3</string>

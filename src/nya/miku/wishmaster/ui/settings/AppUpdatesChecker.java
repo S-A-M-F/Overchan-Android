@@ -48,7 +48,7 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 public class AppUpdatesChecker {
     private static final String TAG = "AppUpdatesChecker";
     private static final String PREF_KEY_LAST_CHECK = "last_check_for_updates";
-    private static final String URL_PATH = "https://api.github.com/repos/overchan-project/Overchan-Android/releases/";
+    private static final String URL_PATH = "https://api.github.com/repos/S-A-M-F/Overchan-Android/releases/";
     private static final String URL_BETA = "tags/current";
     private static final String URL_STABLE = "latest";
 

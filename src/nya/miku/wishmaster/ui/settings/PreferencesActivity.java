@@ -181,8 +181,16 @@ public class PreferencesActivity extends PreferenceActivity {
             }
         });
         
-        getPreferenceManager().findPreference(getString(R.string.pref_key_update_on_startup)).setEnabled(false);
         getPreferenceManager().findPreference(getString(R.string.pref_key_update_allow_beta)).setEnabled(false);
+
+        Preference updateCheckPreference = getPreferenceManager().findPreference(getString(R.string.pref_key_update_check_now));
+        updateCheckPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AppUpdatesChecker.checkForUpdates(PreferencesActivity.this);
+                return true;
+            }
+        });
         
         Preference licensePreference = getPreferenceManager().findPreference(getString(R.string.pref_key_about_license));
         licensePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

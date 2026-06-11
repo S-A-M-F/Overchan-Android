@@ -552,6 +552,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:key="@string/pref_key_update_allow_beta"
             android:title="@string/pref_update_allow_beta_title"
             android:summary="@string/pref_update_allow_beta_summary" />
+
+        <Preference
+            android:key="@string/pref_key_update_check_now"
+            android:title="@string/pref_update_check_now_title"
+            android:summary="@string/pref_update_check_now_summary" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_cat_about">

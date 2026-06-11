@@ -250,7 +250,7 @@ public class ApplicationSettings {
     }
     
     public boolean isUpdateOnStartup() {
-        return false;
+        return preferences.getBoolean(resources.getString(R.string.pref_key_update_on_startup), false);
     }
 
     public boolean isUpdateAllowBeta() {

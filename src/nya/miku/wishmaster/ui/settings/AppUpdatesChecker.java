@@ -30,6 +30,7 @@ import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
+import nya.miku.wishmaster.lib.org_json.JSONArray;
 import nya.miku.wishmaster.lib.org_json.JSONObject;
 import nya.miku.wishmaster.lib.UriFileUtils;
 import nya.miku.wishmaster.ui.tabs.UrlHandler;
@@ -48,9 +49,13 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 public class AppUpdatesChecker {
     private static final String TAG = "AppUpdatesChecker";
     private static final String PREF_KEY_LAST_CHECK = "last_check_for_updates";
-    private static final String URL_PATH = "https://api.github.com/repos/S-A-M-F/Overchan-Android/releases/";
-    private static final String URL_BETA = "tags/current";
-    private static final String URL_STABLE = "latest";
+    // URL_PATH was originally /releases/latest (single JSON object) and /releases/tags/current for beta,
+    // but the "latest" endpoint only returns non-prerelease, non-draft releases.
+    // For samf builds which may be marked as prerelease, we now use /releases?per_page=1
+    // which returns the most recent release (any status) as a JSON array; we take the first element.
+    private static final String URL_PATH = "https://api.github.com/repos/S-A-M-F/Overchan-Android/releases";
+    private static final String URL_BETA = "?per_page=1";
+    private static final String URL_STABLE = "?per_page=1";
 
     public static void checkForUpdates(final Activity activity) {
         checkForUpdates(activity, false);
@@ -87,7 +92,8 @@ public class AppUpdatesChecker {
                     String url = URL_PATH + (MainApplication.getInstance().settings.isUpdateAllowBeta() ? URL_BETA : URL_STABLE);
                     Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.ACCEPT, "application/vnd.github.v3+json") };
                     HttpRequestModel request = HttpRequestModel.builder().setGET().setCustomHeaders(customHeaders).build();
-                    response = HttpStreamer.getInstance().getJSONObjectFromUrl(url, request, httpClient, null, task, false);
+                    JSONArray releasesArray = HttpStreamer.getInstance().getJSONArrayFromUrl(url, request, httpClient, null, task, false);
+                    response = (releasesArray != null && releasesArray.length() > 0) ? releasesArray.getJSONObject(0) : null;
                 } catch (Exception e) {
                     response = null;
                 }

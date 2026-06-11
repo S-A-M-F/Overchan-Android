@@ -113,7 +113,7 @@ public class AppUpdatesChecker {
                         }
                         try {
                             if (result == null) throw new Exception();
-                            final String newVersionName = result.getString("name");
+                            final String newVersionName = result.getString("tag_name");
                             final String currentVersionName = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
                             MainApplication.getInstance().preferences.edit().putLong(PREF_KEY_LAST_CHECK, System.currentTimeMillis()).commit();
                             if (!currentVersionName.equals(newVersionName)) {

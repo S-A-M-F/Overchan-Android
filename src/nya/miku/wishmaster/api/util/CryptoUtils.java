@@ -33,6 +33,8 @@ public class CryptoUtils {
     
     private static final Pattern CF_EMAIL =
             Pattern.compile("<(a|span).+?class=\"__cf_email__\".+?data-cfemail=\"([^\"]*)\".*?</\\1>", Pattern.DOTALL);
+    private static final Pattern CF_EMAIL_LINK =
+            Pattern.compile("<a[^>]*href=\"/cdn-cgi/l/email-protection#([^\"]*)\"[^>]*>[^<]*</a>", Pattern.DOTALL);
     
     private static Random random = null;
     
@@ -144,15 +146,23 @@ public class CryptoUtils {
      */
     public static String fixCloudflareEmails(String commentBody) {
         Matcher matcher = CF_EMAIL.matcher(commentBody);
-        if (!matcher.find()) return commentBody;
-        
+        if (matcher.find()) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                String found = matcher.group(2);
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(decodeCloudflareEmail(found)));
+            } while (matcher.find());
+            matcher.appendTail(sb);
+            return sb.toString();
+        }
+        Matcher m2 = CF_EMAIL_LINK.matcher(commentBody);
+        if (!m2.find()) return commentBody;
         StringBuffer sb = new StringBuffer();
         do {
-            String found = matcher.group(2);
-            matcher.appendReplacement(sb, decodeCloudflareEmail(found));
-        } while (matcher.find());
-        matcher.appendTail(sb);
-        
+            String found = m2.group(1);
+            m2.appendReplacement(sb, Matcher.quoteReplacement(decodeCloudflareEmail(found)));
+        } while (m2.find());
+        m2.appendTail(sb);
         return sb.toString();
     }
     

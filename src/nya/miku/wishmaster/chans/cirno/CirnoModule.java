@@ -440,7 +440,7 @@ public class CirnoModule extends StormwallChanModule {
         private static final Pattern ATTACHMENT_ORIGINAL_NAME_PATTERN = Pattern.compile(">\\s*([^<]*)\\s*</a>");
 
         public CirnoReader(InputStream in, DateFormat dateFormat) {
-            super(in, dateFormat);
+            super(in, dateFormat, true);
         }
 
         @Override

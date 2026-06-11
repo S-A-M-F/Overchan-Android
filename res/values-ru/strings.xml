@@ -694,7 +694,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Персональный User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
-    <string name="pref_changelog">1.9.2-samf-2: «Я интуитивно чувствовал: что-то тут не так, всё не то, чем кажется.»\n- HTTPS включён по умолчанию для активных чанов\n- Перенаправления HTTP→HTTPS при отправке теперь показывают понятную ошибку\n- Отладочная сборка теперь сосуществует с релизной\n- Названия доменов iichan вынесены в локализованные строки\n- Слиты ветки функций: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- Исправлено применение настройки HTTPS для iichan при чистой установке</string>
+    <string name="pref_changelog">1.9.3-samf-1: «Рядом с маршрутами наших дневных прогулок есть черные зоны мира теней…»\n- Поддержка DNS-over-HTTPS с 4 режимами и настраиваемым DoH-сервером\n- Поддержка архива Gensokyo RPG\n- Обнаружение несоответствий DNS с диалогом просмотра\n- Встроенная проверка обновлений перезапущена, включена по умолчанию</string>
 
     <string name="pref_dns_mode_title">Режим разрешения DNS</string>
     <string name="pref_dns_mode_summary">Как выполняется разрешение DNS (требуется Android 2.3+)</string>

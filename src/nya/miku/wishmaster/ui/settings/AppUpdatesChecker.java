@@ -49,6 +49,17 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 public class AppUpdatesChecker {
     private static final String TAG = "AppUpdatesChecker";
     private static final String PREF_KEY_LAST_CHECK = "last_check_for_updates";
+    private static int compareVersions(String v1, String v2) {
+        String[] parts1 = v1.split("[^\\d]+");
+        String[] parts2 = v2.split("[^\\d]+");
+        int len = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < len; i++) {
+            int n1 = i < parts1.length && !parts1[i].isEmpty() ? Integer.parseInt(parts1[i]) : 0;
+            int n2 = i < parts2.length && !parts2[i].isEmpty() ? Integer.parseInt(parts2[i]) : 0;
+            if (n1 != n2) return n1 > n2 ? 1 : -1;
+        }
+        return 0;
+    }
     // URL_PATH was originally /releases/latest (single JSON object) and /releases/tags/current for beta,
     // but the "latest" endpoint only returns non-prerelease, non-draft releases.
     // For samf builds which may be marked as prerelease, we now use /releases?per_page=1
@@ -116,7 +127,7 @@ public class AppUpdatesChecker {
                             final String newVersionName = result.getString("tag_name");
                             final String currentVersionName = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
                             MainApplication.getInstance().preferences.edit().putLong(PREF_KEY_LAST_CHECK, System.currentTimeMillis()).commit();
-                            if (!currentVersionName.equals(newVersionName)) {
+                            if (compareVersions(newVersionName, currentVersionName) > 0) {
                                 String newVersionInfo = result.getString("body");
                                 final String url = result.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
                                 DialogInterface.OnClickListener onClickYes = new DialogInterface.OnClickListener() {

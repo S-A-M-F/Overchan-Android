@@ -686,7 +686,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Benutzerdefinierte User-Agent-Zeichenfolge</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.2-samf-2: „Irgend etwas, das spürte ich instinktiv, war auf grauenhafte Weise schiefgegangen. Alles war anders, als es schien.“\n- HTTPS standardmäßig für aktive Chans aktiviert\n- HTTP→HTTPS-Weiterleitungen beim Posten zeigen nun einen beschreibenden Fehler an\n- Debug-APK koexistiert nun mit der Release-Version\n- iichan-Domain-Bezeichnungen in lokalisierte Strings extrahiert\n- Funktionszweige zusammengeführt: marshmallow-bug, recaptcha-fix, gallery-fix, share-fix, ui-tweaks, origin/testing\n- iichan HTTPS-Einstellung wurde bei Neuinstallation nicht übernommen – behoben</string>
+    <string name="pref_changelog">1.9.3-samf-1: „Am Rande unserer alltäglichen Pfade existieren schwarze Orte voller Schatten…“\n- DNS-over-HTTPS-Unterstützung mit 4 Modi und konfigurierbarem DoH-Server\n- Gensokyo-RPG-Archiv-Unterstützung\n- DNS-Fehlerkennung mit Überprüfungsdialog\n- Integrierter Update-Checker reaktiviert, standardmäßig aktiviert</string>
 
     <string name="pref_dns_mode_title">DNS-Auflösungsmodus</string>
     <string name="pref_dns_mode_summary">Wie DNS-Abfragen durchgeführt werden (erfordert Android 2.3+)</string>

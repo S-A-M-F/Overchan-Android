@@ -721,4 +721,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_dns_mismatch_clear_title">Очистити журнал розбіжностей</string>
     <string name="pref_dns_mismatch_empty">Розбіжностей не виявлено</string>
     <string name="dns_mismatch_toast_format">Виявлено розбіжність DNS для %s — ваш провайдер може підміняти DNS</string>
+
+    <string name="dialog_Warning">Google оголосила, що починаючи з 2026/2027 року, всі додатки на сертифікованих пристроях Android вимагатимуть від розробника надання особистих даних для ідентифікації безпосередньо Google. Оскільки розробники цього додатку не погоджуються з цією вимогою, цей додаток перестане працювати на сертифікованих пристроях Android після цього часу.</string>
+    <string name="dialog_more_info">Детальніше</string>
+    <string name="solution">Рішення</string>
 </resources>

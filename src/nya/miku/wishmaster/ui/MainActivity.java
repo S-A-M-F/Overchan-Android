@@ -20,6 +20,9 @@ package nya.miku.wishmaster.ui;
 
 import java.io.Serializable;
 
+import org.woheller69.freeDroidWarn.FreeDroidWarn;
+
+import nya.miku.wishmaster.BuildConfig;
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.models.UrlPageModel;
 import nya.miku.wishmaster.common.Async;
@@ -448,6 +451,7 @@ public class MainActivity extends FragmentActivity {
         (theme = MainApplication.getInstance().settings.getTheme()).setTo(this);
         thumbnailSize = MainApplication.getInstance().settings.getPostThumbnailSize();
         super.onCreate(savedInstanceState);
+        FreeDroidWarn.showWarningOnUpgrade(this, BuildConfig.VERSION_CODE);
         if (MainApplication.getInstance().settings.showSidePanel()) {
             setContentView(tabsPanelRight ? R.layout.main_activity_tablet_right : R.layout.main_activity_tablet);
             LinearLayout.LayoutParams sidebarLayoutParams = (LinearLayout.LayoutParams) findViewById(R.id.sidebar).getLayoutParams();

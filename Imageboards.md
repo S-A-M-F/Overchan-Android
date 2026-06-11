@@ -5,10 +5,11 @@
 * [410chan.org](https://410chan.org/)
 * [bulochka.org](https://bulochka.org/)
 * [ii.yakuji.moe/](https://ii.yakuji.moe/)
+* [gensokyo.4otaku.org/](https://gensokyo.4otaku.org/)
 
 ### Coming Soon
 
-* [gensokyo.4otaku.org/](https://gensokyo.4otaku.org/)
+* ???
 
 ### Formerly Supported Imageboards
 

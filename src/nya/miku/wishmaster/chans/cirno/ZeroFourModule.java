@@ -65,7 +65,17 @@ public class ZeroFourModule extends AbstractKusabaModule {
     protected String getUsingDomain() {
         return ZEROFOUR_DOMAIN;
     }
-
+    
+    @Override
+    public boolean hasNavbarLatestPosts() {
+        return useNavbarLatestPosts(false);
+    }
+    
+    @Override
+    public String buildNavbarLatestPostsUrl() {
+        return getUsingUrl() + "navbar_latest_posts.json";
+    }
+    
     @Override
     protected boolean canHttps() {
         return true;
@@ -94,6 +104,7 @@ public class ZeroFourModule extends AbstractKusabaModule {
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
         addHttpsPreference(preferenceGroup, true);
+        addNavbarLatestPostsPreference(preferenceGroup, false);
         super.addPreferencesOnScreen(preferenceGroup);
     }
 

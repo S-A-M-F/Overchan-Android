@@ -96,6 +96,16 @@ public class Chan410Module extends AbstractChanModule {
     }
     
     @Override
+    public boolean hasNavbarLatestPosts() {
+        return useNavbarLatestPosts(false);
+    }
+    
+    @Override
+    public String buildNavbarLatestPostsUrl() {
+        return getUsingUrl() + "navbar_latest_posts.json";
+    }
+    
+    @Override
     protected void initHttpClient() {
         JSONObject savedCookies = new JSONObject(preferences.getString(getSharedKey(PREF_KEY_FAPTCHA_COOKIES), "{}"));
         for (String board : Chan410Boards.ALL_BOARDS_SET) {
@@ -141,6 +151,7 @@ public class Chan410Module extends AbstractChanModule {
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
         addHttpsPreference(preferenceGroup, true);
+        addNavbarLatestPostsPreference(preferenceGroup, false);
         super.addPreferencesOnScreen(preferenceGroup);
     }
     

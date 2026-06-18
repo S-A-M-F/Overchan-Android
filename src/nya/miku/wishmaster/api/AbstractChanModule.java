@@ -77,6 +77,7 @@ public abstract class AbstractChanModule implements HttpChanModule {
     protected static final String PREF_KEY_ONLY_NEW_POSTS = "PREF_KEY_ONLY_NEW_POSTS";
     protected static final String PREF_KEY_CAPTCHA_AUTO_UPDATE = "PREF_KEY_CAPTCHA_AUTO_UPDATE";
     protected static final String PREF_KEY_SHOW_PERSONAL = "PREF_KEY_SHOW_PERSONAL";
+    protected static final String PREF_KEY_NAVBAR_LATEST_POSTS = "PREF_KEY_NAVBAR_LATEST_POSTS";
 
     /**
      * Основной HTTP-клиент
@@ -351,6 +352,39 @@ public abstract class AbstractChanModule implements HttpChanModule {
         return preferences.getBoolean(getSharedKey(PREF_KEY_ONLY_NEW_POSTS), defaultValue);
     }
     
+    @Override
+    public boolean hasNavbarLatestPosts() {
+        return false;
+    }
+    
+    @Override
+    public String buildNavbarLatestPostsUrl() {
+        return null;
+    }
+    
+    /**
+     * Добавить в группу параметров настройку использования navbar_latest_posts.json
+     * для быстрой проверки активности на досках перед обновлением.
+     */
+    protected CheckBoxPreference addNavbarLatestPostsPreference(PreferenceGroup group, boolean defaultValue) {
+        final Context context = group.getContext();
+        CheckBoxPreference pref = new LazyPreferences.CheckBoxPreference(context);
+        pref.setTitle(R.string.pref_navbar_latest_posts);
+        pref.setSummary(R.string.pref_navbar_latest_posts_summary);
+        pref.setKey(getSharedKey(PREF_KEY_NAVBAR_LATEST_POSTS));
+        pref.setDefaultValue(defaultValue);
+        group.addPreference(pref);
+        return pref;
+    }
+    
+    /**
+     * Определить значение параметра использования navbar_latest_posts.json
+     * из ключа общих настроек {@link #PREF_KEY_NAVBAR_LATEST_POSTS}.
+     */
+    protected boolean useNavbarLatestPosts(boolean defaultValue) {
+        return preferences.getBoolean(getSharedKey(PREF_KEY_NAVBAR_LATEST_POSTS), defaultValue);
+    }
+    
     protected CheckBoxPreference addShowPersonalDataPreference(PreferenceGroup group, boolean defaultValue) {
         final Context context = group.getContext();
         CheckBoxPreference showPersonalPref = new LazyPreferences.CheckBoxPreference(context);
@@ -492,6 +526,32 @@ public abstract class AbstractChanModule implements HttpChanModule {
         captchaModel.type = CaptchaModel.TYPE_NORMAL;
         captchaModel.bitmap = captchaBitmap;
         return captchaModel;
+    }
+
+    /**
+     * Загрузить и распарсить navbar_latest_posts.json с данного чана.
+     * @return Map "название доски" -> "максимальный ID поста", или null при ошибке
+     */
+    protected java.util.Map<String, Integer> getNavbarLatestPosts(ProgressListener listener, CancellableTask task) {
+        if (!hasNavbarLatestPosts()) return null;
+        String url = buildNavbarLatestPostsUrl();
+        if (url == null) return null;
+        try {
+            HttpRequestModel rqModel = HttpRequestModel.builder().setGET().build();
+            JSONObject json = HttpStreamer.getInstance().getJSONObjectFromUrl(url, rqModel, httpClient, listener, task, false);
+            if (json == null) return null;
+            java.util.Map<String, Integer> result = new java.util.HashMap<>();
+            for (String boardName : json.keySet()) {
+                int maxId = json.optInt(boardName, -1);
+                if (maxId >= 0) {
+                    result.put(boardName, maxId);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            Logger.e(TAG, "Failed to fetch navbar_latest_posts.json", e);
+            return null;
+        }
     }
 
     //TODO: Write the documentation

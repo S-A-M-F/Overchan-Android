@@ -20,13 +20,18 @@ package nya.miku.wishmaster.ui.tabs;
 
 import java.lang.Thread;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.LockSupport;
 
 import org.apache.commons.lang3.tuple.Triple;
 
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.ChanModule;
+import nya.miku.wishmaster.api.HttpChanModule;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.CancellableTask.BaseCancellableTask;
 import nya.miku.wishmaster.api.models.UrlPageModel;
@@ -37,6 +42,10 @@ import nya.miku.wishmaster.common.Async;
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.http.interactive.InteractiveException;
+import nya.miku.wishmaster.http.streamer.HttpRequestModel;
+import nya.miku.wishmaster.http.streamer.HttpStreamer;
+import nya.miku.wishmaster.lib.org_json.JSONObject;
+import cz.msebera.android.httpclient.client.HttpClient;
 import nya.miku.wishmaster.http.interactive.MultipurposeException;
 import nya.miku.wishmaster.ui.MainActivity;
 import nya.miku.wishmaster.ui.downloading.BackgroundThumbDownloader;
@@ -294,6 +303,50 @@ public class TabsTrackerService extends Service {
             if (tabsArrayLength > 0)
                 currentUpdatingTabId = tabsArray[0].id;
             sendBroadcastNotify(-1);
+            
+            // --- navbar latest posts: pre-fetch for eligible chans ---
+            final Map<String, Integer> navbarCurrentMaxIds = new HashMap<>();
+            final Set<String> navbarFetchedChans = new HashSet<>();
+            for (final TabModel tab : tabsArray) {
+                if (tab.type != TabModel.TYPE_NORMAL) continue;
+                if (tab.pageModel.type != UrlPageModel.TYPE_THREADPAGE &&
+                    tab.pageModel.type != UrlPageModel.TYPE_BOARDPAGE) continue;
+                if (tab.autoupdateBackground != true) continue;
+                String chanName = tab.pageModel.chanName;
+                if (navbarFetchedChans.contains(chanName)) continue;
+                navbarFetchedChans.add(chanName);
+                ChanModule chan = MainApplication.getInstance().getChanModule(chanName);
+                if (chan == null || !chan.hasNavbarLatestPosts()) continue;
+                String url = chan.buildNavbarLatestPostsUrl();
+                if (url == null) continue;
+                try {
+                    HttpRequestModel rqModel = HttpRequestModel.builder().setGET().build();
+                    HttpClient httpClient = ((HttpChanModule) chan).getHttpClient();
+                    JSONObject json = HttpStreamer.getInstance().getJSONObjectFromUrl(url, rqModel, httpClient, null, task, false);
+                    if (json != null) {
+                        for (String boardName : json.keySet()) {
+                            int maxId = json.optInt(boardName, -1);
+                            if (maxId >= 0) {
+                                navbarCurrentMaxIds.put(chanName + ":" + boardName, maxId);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Logger.e(TAG, "navbar_latest_posts fetch failed for " + chanName, e);
+                }
+            }
+            // Load stored max IDs
+            JSONObject navbarStoredMaxIds;
+            try {
+                String stored = getSharedPreferences("tabs_tracker", MODE_PRIVATE)
+                    .getString("navbar_latest_max_ids", "{}");
+                navbarStoredMaxIds = new JSONObject(stored);
+            } catch (Exception e) {
+                navbarStoredMaxIds = new JSONObject();
+            }
+            final JSONObject navbarStoredMaxIdsFinal = navbarStoredMaxIds;
+            // --- end navbar setup ---
+            
             for (final TabModel tab : tabsArray) {
                 if (task.isCancelled()) return;
                 if (settings.isAutoupdateWifiOnly() && !Wifi.isConnected() && !immediately) return;
@@ -301,6 +354,26 @@ public class TabsTrackerService extends Service {
                 if ((tab.type == TabModel.TYPE_NORMAL) &&
                     (tab.pageModel.type == UrlPageModel.TYPE_THREADPAGE) &&
                     (tab.autoupdateBackground == true)) {
+                    
+                    // --- navbar latest posts: check if we can skip ---
+                    boolean skipUpdate = false;
+                    if (navbarCurrentMaxIds.size() > 0 && navbarStoredMaxIdsFinal != null) {
+                        String key = tab.pageModel.chanName + ":" + tab.pageModel.boardName;
+                        if (navbarCurrentMaxIds.containsKey(key) && navbarStoredMaxIdsFinal.has(key)) {
+                            int current = navbarCurrentMaxIds.get(key);
+                            int stored = navbarStoredMaxIdsFinal.optInt(key, -1);
+                            if (current == stored) {
+                                skipUpdate = true;
+                            }
+                        }
+                    }
+                    if (skipUpdate) {
+                        tab.autoupdateComplete = true;
+                        sendBroadcastNotify(tab.id);
+                        continue;
+                    }
+                    // --- end navbar check ---
+                    
                     if ((tabsSwitcher.currentId != null && tabsSwitcher.currentId.equals(tab.id)) &&
                         (tabsSwitcher.currentFragment instanceof BoardFragment)) {
                         Async.runOnUiThread(new Runnable() {
@@ -353,6 +426,16 @@ public class TabsTrackerService extends Service {
                                 } else {
                                     pagesCache.putSerializablePage(hash, serializablePage);
                                 }
+                                // --- update stored navbar max id on success ---
+                                if (navbarCurrentMaxIds.size() > 0 && navbarStoredMaxIdsFinal != null) {
+                                    String key = tab.pageModel.chanName + ":" + tab.pageModel.boardName;
+                                    if (navbarCurrentMaxIds.containsKey(key)) {
+                                        try {
+                                            navbarStoredMaxIdsFinal.put(key, navbarCurrentMaxIds.get(key));
+                                        } catch (Exception e) {}
+                                    }
+                                }
+                                // --- end navbar update ---
                             }
                             @Override
                             public void onInteractiveException(InteractiveException e) {
@@ -376,6 +459,14 @@ public class TabsTrackerService extends Service {
                 tab.autoupdateComplete = true;
                 sendBroadcastNotify(tab.id);
             }
+            
+            // --- save navbar stored max ids ---
+            if (navbarStoredMaxIdsFinal != null && navbarStoredMaxIdsFinal.length() > 0) {
+                getSharedPreferences("tabs_tracker", MODE_PRIVATE)
+                    .edit().putString("navbar_latest_max_ids", navbarStoredMaxIdsFinal.toString()).apply();
+            }
+            // --- end navbar save ---
+            
         } else if (tabsSwitcher.currentFragment instanceof BoardFragment) {
             TabModel tab = tabsState.findTabById(tabsSwitcher.currentId);
             if (tab != null && tab.pageModel != null && tab.type == TabModel.TYPE_NORMAL && tab.pageModel.type == UrlPageModel.TYPE_THREADPAGE) {

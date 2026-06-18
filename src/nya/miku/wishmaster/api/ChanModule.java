@@ -231,5 +231,19 @@ public interface ChanModule {
      * @return абсолютный адрес
      */
     String fixRelativeUrl(String url);
+
+    /**
+     * Whether this server endpoint supports lightweight board
+     * activity detection via navbar_latest_posts.json.
+     * Checked by TabsTrackerService before background updates.
+     */
+    boolean hasNavbarLatestPosts();
+
+    /**
+     * Full URL to the navbar_latest_posts.json endpoint.
+     * Only meaningful when hasNavbarLatestPosts() returns true.
+     * e.g. "https://410chan.org/navbar_latest_posts.json"
+     */
+    String buildNavbarLatestPostsUrl();
     
 }

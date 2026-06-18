@@ -482,6 +482,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_domain_summary">Резервні адреси: %s</string>
     <string name="pref_only_new_posts">Лише нові пости</string>
     <string name="pref_only_new_posts_summary">Запитувати лише нові пости, а не цілий тред</string>
+    <string name="pref_navbar_latest_posts">Швидка перевірка активності на дошці</string>
+    <string
+        name="pref_navbar_latest_posts_summary"
+    >Перевіряти /navbar_latest_posts.json перед завантаженням. Пропустити оновлення, якщо на дошці немає активності. Експериментально.</string>
     <string name="pref_captcha_type">Тип капчі</string>
     <string name="pref_password_title">Пароль</string>
     <string name="pref_password_summary">Типовий пароль видалення постів</string>

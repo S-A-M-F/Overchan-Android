@@ -472,6 +472,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_domain_summary">Reserved domains: %s</string>
     <string name="pref_only_new_posts">Nur neue Posts</string>
     <string name="pref_only_new_posts_summary">Laden Sie nur neuen Posts ohne Neuladen der ganzen Thread</string>
+    <string name="pref_navbar_latest_posts">Schnelle Board-Änderungserkennung</string>
+    <string
+        name="pref_navbar_latest_posts_summary"
+    >/navbar_latest_posts.json vor dem Abrufen prüfen. Überspringen, wenn keine Aktivität auf diesem Board. Experimentell.</string>
     <string name="pref_captcha_type">Captcha-Typ</string>
     <string name="pref_password_title">Passwort</string>
     <string name="pref_password_summary">Passwort zum Löschen von Posts standardmäßig</string>

@@ -479,6 +479,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_domain_summary">Резервные адреса: %s</string>
     <string name="pref_only_new_posts">Только новые посты</string>
     <string name="pref_only_new_posts_summary">Загружать только новые посты вместо обновления всего треда</string>
+    <string name="pref_navbar_latest_posts">Быстрая проверка активности на доске</string>
+    <string
+        name="pref_navbar_latest_posts_summary"
+    >Проверять /navbar_latest_posts.json перед загрузкой. Пропустить обновление, если на доске нет активности. Экспериментально.</string>
     <string name="pref_captcha_type">Тип капчи</string>
     <string name="pref_password_title">Пароль</string>
     <string name="pref_password_summary">Пароль для удаления постов по умолчанию</string>

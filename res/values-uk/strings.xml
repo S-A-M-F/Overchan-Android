@@ -420,6 +420,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="iichan_prefs_domain_summary">Виберіть домен для завантаження</string>
     <string name="iichan_prefs_report_thread">Тред для скарг</string>
     <string name="iichan_prefs_report_thread_summary">Номер треду в /d/ для повідомлень про порушення</string>
+    <string name="iichan_prefs_post_timeout">Таймаут відповіді при надсиланні (секунди)</string>
+    <string name="iichan_prefs_post_timeout_summary">Скільки чекати відповіді під час надсилання або видалення. iichan може відповідати із затримкою.</string>
+    <string name="iichan_prefs_post_timeout_hint">120</string>
     
     <string name="kraut_prefs_kompturcode">Komturcode</string>
     <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>

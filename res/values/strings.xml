@@ -508,6 +508,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string
         name="iichan_prefs_report_thread_summary"
     >Number of the thread in /d/ for reporting abuse</string>
+    <string name="iichan_prefs_post_timeout">Posting response timeout (seconds)</string>
+    <string
+        name="iichan_prefs_post_timeout_summary"
+    >How long to wait for a response when posting or deleting. iichan can take a while to respond.</string>
+    <string name="iichan_prefs_post_timeout_hint">120</string>
 
     <string name="kraut_prefs_kompturcode">Komturcode</string>
     <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>

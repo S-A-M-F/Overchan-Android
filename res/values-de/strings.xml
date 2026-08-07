@@ -410,6 +410,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="iichan_prefs_domain_summary">Wählen Sie eine Domain zum Laden</string>
     <string name="iichan_prefs_report_thread">Thread für die Meldung</string>
     <string name="iichan_prefs_report_thread_summary">Threadnummer in /d/ für die Meldung von Missbrauch</string>
+    <string name="iichan_prefs_post_timeout">Antwort-Timeout beim Posten (Sekunden)</string>
+    <string name="iichan_prefs_post_timeout_summary">Wie lange beim Posten oder Löschen auf eine Antwort gewartet wird. iichan kann verzögert antworten.</string>
+    <string name="iichan_prefs_post_timeout_hint">120</string>
     
     <string name="kraut_prefs_kompturcode">Komturcode</string>
     <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>

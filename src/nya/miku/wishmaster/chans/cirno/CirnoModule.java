@@ -86,6 +86,8 @@ public class CirnoModule extends StormwallChanModule {
     
     private static final String PREF_KEY_DOMAIN = "PREF_KEY_DOMAIN";
     private static final String PREF_KEY_REPORT_THREAD = "PREF_KEY_REPORT_THREAD";
+    private static final String PREF_KEY_POST_TIMEOUT = "PREF_KEY_POST_TIMEOUT";
+    private static final int DEFAULT_POST_TIMEOUT_SECONDS = 120;
     private String lastReportCaptcha;
     
     public CirnoModule(SharedPreferences preferences, Resources resources) {
@@ -94,6 +96,19 @@ public class CirnoModule extends StormwallChanModule {
     
     private String getDomain() {
         return preferences.getString(getSharedKey(PREF_KEY_DOMAIN), IICHAN_DOMAIN_DEFAULT);
+    }
+    
+    private int getPostTimeoutMs() {
+        int defaultValue = DEFAULT_POST_TIMEOUT_SECONDS * 1000;
+        String value = preferences.getString(getSharedKey(PREF_KEY_POST_TIMEOUT), null);
+        if (value == null || value.trim().length() == 0) return defaultValue;
+        try {
+            int seconds = Integer.parseInt(value.trim());
+            if (seconds < 1) return defaultValue;
+            return seconds * 1000;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
     
     @Override
@@ -143,6 +158,18 @@ public class CirnoModule extends StormwallChanModule {
         passwordPref.getEditText().setSingleLine();
         passwordPref.getEditText().setFilters(new InputFilter[] { new InputFilter.LengthFilter(255) });
         preferenceGroup.addPreference(passwordPref);
+        
+        EditTextPreference postTimeoutPref = new EditTextPreference(context);
+        postTimeoutPref.setTitle(R.string.iichan_prefs_post_timeout);
+        postTimeoutPref.setDialogTitle(R.string.iichan_prefs_post_timeout);
+        postTimeoutPref.setSummary(R.string.iichan_prefs_post_timeout_summary);
+        postTimeoutPref.setKey(getSharedKey(PREF_KEY_POST_TIMEOUT));
+        postTimeoutPref.setDefaultValue("");
+        postTimeoutPref.getEditText().setHint(R.string.iichan_prefs_post_timeout_hint);
+        postTimeoutPref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+        postTimeoutPref.getEditText().setSingleLine();
+        postTimeoutPref.getEditText().setFilters(new InputFilter[] { new InputFilter.LengthFilter(4) });
+        preferenceGroup.addPreference(postTimeoutPref);
         
         super.addPreferencesOnScreen(preferenceGroup);
     }
@@ -279,7 +306,8 @@ public class CirnoModule extends StormwallChanModule {
         
         Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, buildUrl(refererPageModel)) };
         HttpRequestModel request = HttpRequestModel.builder().
-                setPOST(postEntityBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).build();
+                setPOST(postEntityBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).
+                setTimeout(getPostTimeoutMs()).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
@@ -339,7 +367,8 @@ public class CirnoModule extends StormwallChanModule {
         if (model.onlyFiles) pairs.add(new BasicNameValuePair("fileonly", "on"));
         pairs.add(new BasicNameValuePair("password", model.password));
         
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).
+                setTimeout(getPostTimeoutMs()).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);

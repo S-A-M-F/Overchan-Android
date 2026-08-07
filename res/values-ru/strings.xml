@@ -417,6 +417,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="iichan_prefs_domain_summary">Выберите домен для загрузки</string>
     <string name="iichan_prefs_report_thread">Тред для жалоб</string>
     <string name="iichan_prefs_report_thread_summary">Номер треда в /d/ для сообщений о нарушениях</string>
+    <string name="iichan_prefs_post_timeout">Таймаут ответа при отправке (секунды)</string>
+    <string name="iichan_prefs_post_timeout_summary">Сколько ждать ответа при отправке или удалении. Ычан может отвечать с задержкой.</string>
+    <string name="iichan_prefs_post_timeout_hint">120</string>
     
     <string name="kraut_prefs_kompturcode">Komturcode</string>
     <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>

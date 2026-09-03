@@ -7,9 +7,12 @@
 * [ii.yakuji.moe/](https://ii.yakuji.moe/)
 * [gensokyo.4otaku.org/](https://gensokyo.4otaku.org/)
 
-### Coming Soon
-
-* ???
+### Why not add X?
+* Because personally I have no reason to go anywhere else so far.
+* Because that would require actual testing on boards I sometimes don't even want to touch with a lightyear-long pole (no offense, to each their own)
+* Because I'm (almost surely) unaware of existence of some boards I would tolerate or even like 
+* Given that, I'm not against adding/reenabling more - but only if someone would handle (at least) actual testing
+* For feedback - [Current Overchan thread on Bus410](https://410chan.org/dev/res/27507.html). Or make issues here.
 
 ### Formerly Supported Imageboards
 

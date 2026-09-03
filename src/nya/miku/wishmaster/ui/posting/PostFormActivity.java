@@ -113,6 +113,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     
     private ChanModule chan;
     private volatile CancellableTask currentTask;
+    private boolean skipNextSetCaptcha;
     
     private ArrayList<File> attachments;
     private String currentPath;
@@ -221,6 +222,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
             }
         }
         
+        skipNextSetCaptcha = true;
         setCaptcha();
     }
     
@@ -839,7 +841,11 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         readSendPostModel();
-        setCaptcha();
+        if (skipNextSetCaptcha) {
+            skipNextSetCaptcha = false;
+        } else {
+            setCaptcha();
+        }
     }
     
     @Override

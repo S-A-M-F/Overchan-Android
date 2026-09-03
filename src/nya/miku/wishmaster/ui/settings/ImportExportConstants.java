@@ -36,6 +36,7 @@ public class ImportExportConstants {
             "PREF_KEY_USE_HTTPS",
             "PREF_KEY_ONLY_NEW_POSTS",
             "PREF_KEY_CAPTCHA_AUTO_UPDATE",
+            "PREF_KEY_CAPTCHA_SAVE",
             "PREF_KEY_CACHE_MAXSIZE",
             "PREF_KEY_SETTINGS_IMPORT_OVERWRITE",
     };

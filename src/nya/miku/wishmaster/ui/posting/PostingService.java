@@ -19,20 +19,28 @@
 package nya.miku.wishmaster.ui.posting;
 
 import nya.miku.wishmaster.R;
+import nya.miku.wishmaster.api.AbstractChanModule;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
 import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.SendPostModel;
 import nya.miku.wishmaster.api.models.UrlPageModel;
+import nya.miku.wishmaster.api.util.CaptchaUtils;
 import nya.miku.wishmaster.cache.FileCache;
 import nya.miku.wishmaster.common.Async;
+import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.http.interactive.InteractiveException;
 import nya.miku.wishmaster.ui.MainActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
@@ -178,6 +186,7 @@ public class PostingService extends Service {
             notificationManager.notify(POSTING_NOTIFICATION_ID, progressNotifBuilder.build());
             
             boolean success = false;
+            boolean wrongCaptcha = false;
             String targetUrl = null;
             try {
                 targetUrl = MainApplication.getInstance().getChanModule(sendPostModel.chanName).sendPost(sendPostModel, new ProgressListener() {
@@ -216,6 +225,7 @@ public class PostingService extends Service {
                 success = true;
             } catch (Exception e) {
                 Logger.e(TAG, "exception while posting", e);
+                wrongCaptcha = CaptchaUtils.isWrongCaptchaError(e.getMessage());
                 if (!isCancelled()) {
                     Intent broadcastIntent = new Intent(BROADCAST_ACTION_STATUS);
                     broadcastIntent.putExtra(EXTRA_BROADCAST_PROGRESS_STATUS, BROADCAST_STATUS_ERROR);
@@ -260,7 +270,9 @@ public class PostingService extends Service {
                     sendBroadcast(broadcastIntent);
                 }
             }
-            
+
+            saveCaptchaAndCleanup(sendPostModel, wrongCaptcha);
+
             if (success && !isCancelled()) {
                 FileCache fileCache = MainApplication.getInstance().fileCache;
                 for (File attachment : sendPostModel.attachments) {
@@ -336,11 +348,68 @@ public class PostingService extends Service {
                         build());
                 notificationManager.cancel(POSTING_NOTIFICATION_ID);
             }
-            
+
             Logger.d(TAG, "stop; nowPosting = false");
             nowPosting = false;
             stopSelf(startId);
         }
+    }
+
+    private void saveCaptchaAndCleanup(SendPostModel model, boolean wrongCaptcha) {
+        if (model == null || model.captchaTempFile == null) return;
+        FileCache fileCache = MainApplication.getInstance().fileCache;
+        if (fileCache.get(model.captchaTempFile.toString()) == null) return;
+
+        AbstractChanModule chanModule = null;
+        try {
+            nya.miku.wishmaster.api.ChanModule chan = MainApplication.getInstance().getChanModule(model.chanName);
+            if (chan instanceof AbstractChanModule) chanModule = (AbstractChanModule) chan;
+        } catch (Exception e) {
+            Logger.e(TAG, e);
+        }
+
+        if (chanModule != null) {
+            int saveMode = chanModule.getCaptchaSaveMode();
+            boolean shouldSave = saveMode == AbstractChanModule.CAPTCHA_SAVE_ALWAYS ||
+                    (saveMode == AbstractChanModule.CAPTCHA_SAVE_ATTACHED && model.addCaptchaToPost);
+            if (shouldSave) {
+                try {
+                    String content;
+                    if (wrongCaptcha) {
+                        content = "wrong_guess";
+                    } else if (model.captchaAlreadyPaid) {
+                        content = "unknown";
+                    } else {
+                        content = model.captchaContent != null ? model.captchaContent :
+                                CaptchaUtils.sanitizeContent(model.captchaAnswer);
+                    }
+                    String timestamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+                    String fileName = model.boardName + "-" + content + "-" + timestamp + ".png";
+                    File dir = new File(new File(MainApplication.getInstance().settings.getDownloadDirectory(), chanModule.getChanName()), "captcha");
+                    if (!dir.mkdirs() && !dir.isDirectory()) throw new Exception("Couldn't create directory: " + dir);
+                    File dest = new File(dir, fileName);
+                    int i = 1;
+                    while (dest.exists() || dest.isDirectory()) {
+                        dest = new File(dir, model.boardName + "-" + content + "-" + timestamp + "_" + (++i) + ".png");
+                    }
+                    FileInputStream in = null;
+                    FileOutputStream out = null;
+                    try {
+                        in = new FileInputStream(model.captchaTempFile);
+                        out = new FileOutputStream(dest);
+                        IOUtils.copyStream(in, out);
+                    } finally {
+                        IOUtils.closeQuietly(in);
+                        IOUtils.closeQuietly(out);
+                    }
+                    Logger.d(TAG, "saved captcha to " + dest.getAbsolutePath());
+                } catch (Exception e) {
+                    Logger.e(TAG, "failed to save captcha", e);
+                }
+            }
+        }
+
+        fileCache.delete(model.captchaTempFile);
     }
     
     public static class PostingServiceBinder extends Binder {

@@ -102,10 +102,17 @@ public class ExtendedMultipartBuilder {
     }
 
     private ExtendedMultipartBuilder addFile(String key, File value, String mimeType, final int randomTail) {
+        return addFile(key, value, mimeType, randomTail, null);
+    }
+
+    private ExtendedMultipartBuilder addFile(String key, File value, String mimeType, final int randomTail, final String filename) {
+        String partFilename = filename;
+        if (partFilename == null && MainApplication.getInstance().settings.isFakeFilenames()) {
+            partFilename = generateFakeFilename(value);
+        }
         return addPart(key, new FileBody(value, (mimeType == null || mimeType.length() == 0) ?
                 ContentType.APPLICATION_OCTET_STREAM : ContentType.create(mimeType),
-                MainApplication.getInstance().settings.isFakeFilenames() ?
-                generateFakeFilename(value) : null) {
+                partFilename) {
             @Override
             public long getContentLength() {
                 return super.getContentLength() + randomTail;
@@ -143,6 +150,19 @@ public class ExtendedMultipartBuilder {
      */
     public ExtendedMultipartBuilder addFile(String key, File file, boolean uniqueHash) {
         return addFile(key, file, null, uniqueHash ? RANDOMHASH_TAIL_SIZE : 0);
+    }
+    
+    /**
+     * Добавить файл с явно заданным именем в multipart-запросе.
+     * Файл с {@code uniqueHash = true} будет дополнен в конец несколькими рандомными байтами (уникальный хэш).
+     * @param key имя (ключ)
+     * @param file прикрепляемый файл
+     * @param uniqueHash если true, добавит в конец файла несколько рандомных байтов
+     * @param filename имя файла, отправляемое серверу (filename part), либо null для поведения по умолчанию
+     * @return этот объект
+     */
+    public ExtendedMultipartBuilder addFile(String key, File file, boolean uniqueHash, String filename) {
+        return addFile(key, file, null, uniqueHash ? RANDOMHASH_TAIL_SIZE : 0, filename);
     }
     
     /**

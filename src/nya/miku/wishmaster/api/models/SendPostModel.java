@@ -73,4 +73,16 @@ public class SendPostModel implements Serializable {
     
     /** Ответ на капчу */
     @Tag(14) public String captchaAnswer;
+    
+    /** true, если капча должна быть прикреплена к посту (персонольная опция формы, не сохраняется между постами) */
+    @Tag(16) public boolean addCaptchaToPost;
+    
+    /** Очищенное содержимое капчи (поле ввода ответа), используемое в именах файлов (%capcha_content%) */
+    @Tag(17) public String captchaContent;
+    
+    /** Временный файл с копией текущей капчи (для сохранения и/или прикрепления), удаляется после постинга */
+    @Tag(18) public File captchaTempFile;
+
+    /** Режим «проезд оплачен» (адаптивная капча): прикреплённое изображение фаптчи с именем faptcha.%ext% и содержимым «unknown» */
+    @Tag(19) public boolean captchaAlreadyPaid;
 }

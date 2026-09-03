@@ -925,6 +925,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>50\uff05</item>
     </string-array>
     <string name="pref_captcha_auto_update">Auto-update CAPTCHA</string>
+    <string name="postform_add_captcha_to_post">Add CAPTCHA to post</string>
+    <string name="pref_captcha_save_title">Save CAPTCHA images</string>
+    <string name="pref_captcha_save_summary">Save CAPTCHA images added to posts or on every post attempt</string>
+    <string name="pref_captcha_save_never">Never save</string>
+    <string name="pref_captcha_save_attached">Save only those attached to posts</string>
+    <string name="pref_captcha_save_always">Always save</string>
+    <string name="postform_captcha_already_paid">Fare paid</string>
     <string name="mark_code">Code</string>
     <string name="pref_key_settings_ie_title">Preferences import/export</string>
     <string name="pref_key_settings_export_title">Export</string>

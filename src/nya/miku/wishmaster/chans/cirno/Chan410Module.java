@@ -19,6 +19,7 @@
 package nya.miku.wishmaster.chans.cirno;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -49,6 +50,7 @@ import nya.miku.wishmaster.api.models.SimpleBoardModel;
 import nya.miku.wishmaster.api.models.ThreadModel;
 import nya.miku.wishmaster.api.models.UrlPageModel;
 import nya.miku.wishmaster.api.util.ChanModels;
+import nya.miku.wishmaster.api.util.CaptchaUtils;
 import nya.miku.wishmaster.api.util.WakabaUtils;
 import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.http.ExtendedMultipartBuilder;
@@ -146,6 +148,10 @@ public class Chan410Module extends AbstractChanModule {
     public void clearCookies() {
         super.clearCookies();
         preferences.edit().remove(getSharedKey(PREF_KEY_FAPTCHA_COOKIES)).commit();
+        updateHttpClient(
+                preferences.getBoolean(getSharedKey(PREF_KEY_USE_PROXY), false),
+                preferences.getString(getSharedKey(PREF_KEY_PROXY_HOST), DEFAULT_PROXY_HOST),
+                preferences.getString(getSharedKey(PREF_KEY_PROXY_PORT), DEFAULT_PROXY_PORT));
     }
 
     @Override
@@ -153,6 +159,11 @@ public class Chan410Module extends AbstractChanModule {
         addHttpsPreference(preferenceGroup, true);
         addNavbarLatestPostsPreference(preferenceGroup, false);
         super.addPreferencesOnScreen(preferenceGroup);
+    }
+    
+    @Override
+    public boolean supportsCaptchaAttachment() {
+        return true;
     }
     
     @Override
@@ -260,10 +271,12 @@ public class Chan410Module extends AbstractChanModule {
     @Override
     public CaptchaModel getNewCaptcha(String boardName, String threadNumber, ProgressListener listener, CancellableTask task) throws Exception {
         String checkUrl = getUsingUrl() + "api_adaptive.php?board=" + boardName;
-        if (HttpStreamer.getInstance().getStringFromUrl(checkUrl, HttpRequestModel.DEFAULT_GET, httpClient, listener, task, false).trim().
-                equals("1")) return null;
+        boolean isAdaptive = HttpStreamer.getInstance().getStringFromUrl(checkUrl, HttpRequestModel.DEFAULT_GET, httpClient, listener, task, false).trim().
+                equals("1");
         String captchaUrl = getUsingUrl() + "faptcha.php?board=" + boardName;
-        return downloadCaptcha(captchaUrl, listener, task);
+        CaptchaModel model = downloadCaptcha(captchaUrl, listener, task);
+        if (isAdaptive) model.alreadyPaid = true;
+        return model;
     }
     
     @Override
@@ -279,8 +292,12 @@ public class Chan410Module extends AbstractChanModule {
                 addString("postpassword", model.password);
         if (model.sage) postEntityBuilder.addString("sage", "on");
         postEntityBuilder.addString("noko", "on");
-        if (model.attachments != null && model.attachments.length > 0)
-            postEntityBuilder.addFile("imagefile", model.attachments[0], model.randomHash);
+        if (model.attachments != null && model.attachments.length > 0) {
+            File firstFile = model.attachments[0];
+            boolean captchaFile = CaptchaUtils.isCaptchaAttachment(model, firstFile);
+            postEntityBuilder.addFile("imagefile", firstFile, captchaFile ? false : model.randomHash,
+                    captchaFile ? CaptchaUtils.getCaptchaUploadFilename(model) : null);
+        }
         
         HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).setNoRedirect(true).build();
         HttpResponseModel response = null;

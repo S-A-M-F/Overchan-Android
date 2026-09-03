@@ -31,6 +31,7 @@ import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.models.BoardModel;
 import nya.miku.wishmaster.api.models.CaptchaModel;
 import nya.miku.wishmaster.api.models.SendPostModel;
+import nya.miku.wishmaster.api.util.CaptchaUtils;
 import nya.miku.wishmaster.cache.FileCache;
 import nya.miku.wishmaster.common.Async;
 import nya.miku.wishmaster.common.Logger;
@@ -103,6 +104,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     private ImageView captchaView;
     private View captchaLoading;
     private EditText captchaField;
+    private CheckBox addCaptchaChkbox;
     private Button sendButton;
     
     private String hash;
@@ -530,6 +532,11 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
             }
         });
 
+        addCaptchaChkbox = (CheckBox) findViewById(R.id.postform_add_captcha_checkbox);
+        if (!(chan instanceof AbstractChanModule && ((AbstractChanModule) chan).supportsCaptchaAttachment())) {
+            addCaptchaChkbox.setVisibility(View.GONE);
+        }
+
         sendButton = (Button) findViewById(R.id.postform_send_button);
         sendButton.setOnClickListener(this);
         sendButton.setOnLongClickListener(this);
@@ -631,9 +638,55 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
         sendPostModel.sage = sageChkbox.isChecked();
         sendPostModel.custommark = custommarkChkbox.isChecked();
         sendPostModel.captchaAnswer = captchaField.getText().toString();
+        sendPostModel.addCaptchaToPost = false;
+        sendPostModel.captchaContent = null;
+        sendPostModel.captchaTempFile = null;
+        sendPostModel.captchaAlreadyPaid = false;
+        boolean captchaAttachRequested = addCaptchaChkbox != null && addCaptchaChkbox.isChecked();
+        boolean captchaSaveAlways = chan instanceof AbstractChanModule &&
+                ((AbstractChanModule) chan).getCaptchaSaveMode() == AbstractChanModule.CAPTCHA_SAVE_ALWAYS;
+        if ((captchaAttachRequested || captchaSaveAlways) && captchaView.getVisibility() == View.VISIBLE) {
+            File captchaTemp = createCaptchaTempFile();
+            if (captchaTemp != null) {
+                CaptchaModel cachedCaptcha = MainApplication.getInstance().draftsCache.getLastCaptcha();
+                boolean isAlreadyPaid = cachedCaptcha != null && cachedCaptcha.alreadyPaid;
+                sendPostModel.captchaAlreadyPaid = isAlreadyPaid;
+                sendPostModel.captchaContent = isAlreadyPaid ? "faptcha" :
+                        CaptchaUtils.sanitizeContent(captchaField.getText().toString());
+                sendPostModel.captchaTempFile = captchaTemp;
+                if (captchaAttachRequested) {
+                    sendPostModel.addCaptchaToPost = true;
+                    if (!attachments.contains(captchaTemp)) attachments.add(captchaTemp);
+                }
+            }
+        }
         sendPostModel.attachments = attachments.toArray(new File[attachments.size()]);
         sendPostModel.randomHash = boardModel.allowRandomHash && settings.isRandomHash();
         MainApplication.getInstance().draftsCache.put(hash, sendPostModel);
+    }
+    
+    private File createCaptchaTempFile() {
+        CaptchaModel captchaModel = MainApplication.getInstance().draftsCache.getLastCaptcha();
+        if (captchaModel == null || captchaModel.bitmap == null) return null;
+        try {
+            FileCache fileCache = MainApplication.getInstance().fileCache;
+            File file = fileCache.create(fileCache.PREFIX_ATTACHMENTS + "captcha_" + System.currentTimeMillis() + ".png");
+            OutputStream stream = null;
+            try {
+                stream = new FileOutputStream(file);
+                if (!captchaModel.bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
+                    fileCache.abort(file);
+                    return null;
+                }
+            } finally {
+                if (stream != null) stream.close();
+            }
+            fileCache.put(file);
+            return file;
+        } catch (Exception e) {
+            Logger.e(TAG, e);
+            return null;
+        }
     }
     
     private void setCaptcha() {
@@ -649,6 +702,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
         captchaLoading.setVisibility(View.VISIBLE);
         captchaView.setVisibility(View.GONE);
         captchaField.setEnabled(!disableCaptchaField);
+        if (addCaptchaChkbox != null) addCaptchaChkbox.setVisibility(View.GONE);
         sendButton.setEnabled(false);
     }
     
@@ -666,14 +720,25 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
                 captchaModel.bitmap = adaptCaptchaColors(captchaModel.bitmap);
             }
             captchaView.setImageBitmap(captchaModel.bitmap);
-            captchaField.setEnabled(true);
-            captchaField.setInputType(
-                    captchaModel.type == CaptchaModel.TYPE_NORMAL ?
-                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
-                    InputType.TYPE_CLASS_NUMBER );
+            if (captchaModel.alreadyPaid) {
+                captchaField.setText(R.string.postform_captcha_already_paid);
+                captchaField.setEnabled(false);
+            } else {
+                captchaField.setText("");
+                captchaField.setEnabled(true);
+                captchaField.setInputType(
+                        captchaModel.type == CaptchaModel.TYPE_NORMAL ?
+                        InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
+                        InputType.TYPE_CLASS_NUMBER );
+            }
+            if (addCaptchaChkbox != null && chan instanceof AbstractChanModule &&
+                    ((AbstractChanModule) chan).supportsCaptchaAttachment()) {
+                addCaptchaChkbox.setVisibility(View.VISIBLE);
+            }
         } else {
             captchaLayout.setVisibility(View.GONE);
             captchaField.setVisibility(View.GONE);
+            if (addCaptchaChkbox != null) addCaptchaChkbox.setVisibility(View.GONE);
             sendButton.setLayoutParams(getWideLayoutParams());
         }
     }
@@ -683,6 +748,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
         captchaView.setVisibility(View.VISIBLE);
         captchaView.setImageResource(android.R.drawable.ic_dialog_alert);
         captchaField.setEnabled(false);
+        if (addCaptchaChkbox != null) addCaptchaChkbox.setVisibility(View.GONE);
         sendButton.setEnabled(false);
     }
     
@@ -773,6 +839,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         readSendPostModel();
+        setCaptcha();
     }
     
     @Override

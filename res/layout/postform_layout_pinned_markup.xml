@@ -214,6 +214,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     android:indeterminate="true" />
             </FrameLayout>
             
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/postform_add_captcha_checkbox"
+                android:text="@string/postform_add_captcha_to_post"
+                android:visibility="gone" />
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

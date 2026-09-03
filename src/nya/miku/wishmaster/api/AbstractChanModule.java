@@ -76,6 +76,20 @@ public abstract class AbstractChanModule implements HttpChanModule {
     protected static final String PREF_KEY_USE_HTTPS = "PREF_KEY_USE_HTTPS";
     protected static final String PREF_KEY_ONLY_NEW_POSTS = "PREF_KEY_ONLY_NEW_POSTS";
     protected static final String PREF_KEY_CAPTCHA_AUTO_UPDATE = "PREF_KEY_CAPTCHA_AUTO_UPDATE";
+    protected static final String PREF_KEY_CAPTCHA_SAVE = "PREF_KEY_CAPTCHA_SAVE";
+
+    /**
+     * Значение параметра сохранения капчи: не сохранять
+     */
+    public static final int CAPTCHA_SAVE_NEVER = 0;
+    /**
+     * Значение параметра сохранения капчи: сохранять только капчи, прикреплённые к постам
+     */
+    public static final int CAPTCHA_SAVE_ATTACHED = 1;
+    /**
+     * Значение параметра сохранения капчи: сохранять всегда
+     */
+    public static final int CAPTCHA_SAVE_ALWAYS = 2;
     protected static final String PREF_KEY_SHOW_PERSONAL = "PREF_KEY_SHOW_PERSONAL";
     protected static final String PREF_KEY_NAVBAR_LATEST_POSTS = "PREF_KEY_NAVBAR_LATEST_POSTS";
 
@@ -150,7 +164,7 @@ public abstract class AbstractChanModule implements HttpChanModule {
      * @param proxyHost адрес прокси-сервера, если useProxy true
      * @param proxyPort порт прокси-сервера, если useProxy true
      */
-    private void updateHttpClient(boolean useProxy, String proxyHost, String proxyPort) {
+    protected void updateHttpClient(boolean useProxy, String proxyHost, String proxyPort) {
         HttpHost proxy = null;
         if (useProxy) {
             try {
@@ -292,6 +306,7 @@ public abstract class AbstractChanModule implements HttpChanModule {
         addPasswordPreference(preferenceGroup);
         addProxyPreferences(preferenceGroup);
         addClearCookiesPreference(preferenceGroup);
+        addCaptchaSavePreference(preferenceGroup);
     }
     
     /**
@@ -567,6 +582,63 @@ public abstract class AbstractChanModule implements HttpChanModule {
     //TODO: Write the documentation
     public boolean getCaptchaAutoUpdatePreference(){
         return false;
+    }
+
+    /**
+     * Определить, поддерживает ли данный ChanModule прикрепление капчи к посту.
+     * По умолчанию - false (функция недоступна).
+     */
+    public boolean supportsCaptchaAttachment() {
+        return false;
+    }
+
+    /**
+     * Добавить в группу параметров настройку сохранения капчи в папку загрузок.
+     * Три возможных значения: не сохранять / сохранять только прикреплённые к постам / сохранять всегда.
+     */
+    protected void addCaptchaSavePreference(PreferenceGroup group) {
+        final Context context = group.getContext();
+        final LazyPreferences.ListPreference captchaSavePreference = new LazyPreferences.ListPreference(context);
+        captchaSavePreference.setTitle(R.string.pref_captcha_save_title);
+        captchaSavePreference.setDialogTitle(R.string.pref_captcha_save_title);
+        captchaSavePreference.setSummary(R.string.pref_captcha_save_summary);
+        captchaSavePreference.setKey(getSharedKey(PREF_KEY_CAPTCHA_SAVE));
+        captchaSavePreference.setEntryValues(new String[] { "0", "1", "2" });
+        captchaSavePreference.setEntries(new CharSequence[] {
+                group.getContext().getString(R.string.pref_captcha_save_never),
+                group.getContext().getString(R.string.pref_captcha_save_attached),
+                group.getContext().getString(R.string.pref_captcha_save_always) });
+        captchaSavePreference.setDefaultValue("0");
+        captchaSavePreference.setSummary(captchaSavePreference.getEntries()[getCaptchaSaveMode()]);
+        captchaSavePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                try {
+                    int mode = Integer.parseInt((String) newValue);
+                    if (mode >= CAPTCHA_SAVE_NEVER && mode <= CAPTCHA_SAVE_ALWAYS) {
+                        captchaSavePreference.setSummary(captchaSavePreference.getEntries()[mode]);
+                    }
+                } catch (Exception e) {
+                    Logger.e(TAG, e);
+                }
+                return true;
+            }
+        });
+        group.addPreference(captchaSavePreference);
+    }
+
+    /**
+     * Определить значение настройки сохранения капчи в папку загрузок:
+     * {@link #CAPTCHA_SAVE_NEVER}, {@link #CAPTCHA_SAVE_ATTACHED} или {@link #CAPTCHA_SAVE_ALWAYS}.
+     */
+    public int getCaptchaSaveMode() {
+        try {
+            int mode = Integer.parseInt(preferences.getString(getSharedKey(PREF_KEY_CAPTCHA_SAVE), "0"));
+            if (mode < CAPTCHA_SAVE_NEVER || mode > CAPTCHA_SAVE_ALWAYS) return CAPTCHA_SAVE_NEVER;
+            return mode;
+        } catch (Exception e) {
+            return CAPTCHA_SAVE_NEVER;
+        }
     }
 
 }

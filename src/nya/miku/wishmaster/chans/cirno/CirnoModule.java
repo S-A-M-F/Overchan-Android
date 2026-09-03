@@ -20,6 +20,7 @@ package nya.miku.wishmaster.chans.cirno;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import nya.miku.wishmaster.api.models.SimpleBoardModel;
 import nya.miku.wishmaster.api.models.ThreadModel;
 import nya.miku.wishmaster.api.models.UrlPageModel;
 import nya.miku.wishmaster.api.util.ChanModels;
+import nya.miku.wishmaster.api.util.CaptchaUtils;
 import nya.miku.wishmaster.api.util.WakabaReader;
 import nya.miku.wishmaster.api.util.WakabaUtils;
 import nya.miku.wishmaster.common.IOUtils;
@@ -175,6 +177,11 @@ public class CirnoModule extends StormwallChanModule {
     }
     
     @Override
+    public boolean supportsCaptchaAttachment() {
+        return true;
+    }
+    
+    @Override
     public SimpleBoardModel[] getBoardsList(ProgressListener listener, CancellableTask task, SimpleBoardModel[] oldBoardsList) throws Exception {
         return CirnoBoards.getBoardsList();
     }
@@ -288,8 +295,12 @@ public class CirnoModule extends StormwallChanModule {
                 addString("captcha", model.captchaAnswer).
                 addString("postredir", "1").
                 addString("password", model.password);
-        if (model.attachments != null && model.attachments.length > 0)
-            postEntityBuilder.addFile("file", model.attachments[0], model.randomHash);
+        if (model.attachments != null && model.attachments.length > 0) {
+            File firstFile = model.attachments[0];
+            boolean captchaFile = CaptchaUtils.isCaptchaAttachment(model, firstFile);
+            postEntityBuilder.addFile("file", firstFile, captchaFile ? false : model.randomHash,
+                    captchaFile ? CaptchaUtils.getCaptchaUploadFilename(model) : null);
+        }
         else if (model.threadNumber == null) postEntityBuilder.addString("nofile", "1");
         if (model.custommark) postEntityBuilder.addString("spoiler", "on");
         

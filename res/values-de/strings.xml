@@ -700,7 +700,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Benutzerdefinierte User-Agent-Zeichenfolge</string>
     <string name="pref_makaba_passcode">Passcode</string>
-    <string name="pref_changelog">1.9.3-samf-1: „Am Rande unserer alltäglichen Pfade existieren schwarze Orte voller Schatten…“\n- DNS-over-HTTPS-Unterstützung mit 4 Modi und konfigurierbarem DoH-Server\n- Gensokyo-RPG-Archiv-Unterstützung\n- DNS-Fehlerkennung mit Überprüfungsdialog\n- Integrierter Update-Checker reaktiviert, standardmäßig aktiviert</string>
+    <string name="pref_changelog">1.9.4-samf-1: „Das Staunen war verschwunden, und er hatte vergessen, dass das ganze Leben nur eine Ansammlung von Bildern im Gehirn ist…“\n- Captcha-Bilder anhängen und speichern beim Erstellen von Beiträgen\n- Neue-Posts-Prüfung über die Navigationsleiste für unterstützte Boards\n- FreeDroidWarn-Integration zur Warnung vor der kommenden Sperre von Apps nicht verifizierter Entwickler auf zertifizierten Geräten\n- Antwort-Timeout-Einstellung für iichan\n- Fix für Cloudflare-E-Mail-Verschleierung</string>
 
     <string name="pref_dns_mode_title">DNS-Auflösungsmodus</string>
     <string name="pref_dns_mode_summary">Wie DNS-Abfragen durchgeführt werden (erfordert Android 2.3+)</string>

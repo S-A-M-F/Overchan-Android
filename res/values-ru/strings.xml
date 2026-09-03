@@ -708,7 +708,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_user_agent_string_title">User-Agent</string>
     <string name="pref_user_agent_string_summary">Персональный User-Agent</string>
     <string name="pref_makaba_passcode">Пасскод</string>
-    <string name="pref_changelog">1.9.3-samf-1: «Рядом с маршрутами наших дневных прогулок есть черные зоны мира теней…»\n- Поддержка DNS-over-HTTPS с 4 режимами и настраиваемым DoH-сервером\n- Поддержка архива Gensokyo RPG\n- Обнаружение несоответствий DNS с диалогом просмотра\n- Встроенная проверка обновлений перезапущена, включена по умолчанию</string>
+    <string name="pref_changelog">1.9.4-samf-1: «Он уже не удивлялся и как будто забыл, что вся жизнь – лишь череда представлений, рождающихся в сознании…»\n- Вложение капчи к сообщению и её сохранение при отправке\n- Проверка новых постов через навигационную панель для поддерживаемых досок\n- Интеграция FreeDroidWarn для предупреждения о грядущей блокировке приложений неподтверждённых разработчиков на сертифицированных устройствах\n- Настройка таймаута ответа при отправке на iichan\n- Исправление обфускации email в Cloudflare</string>
 
     <string name="pref_dns_mode_title">Режим разрешения DNS</string>
     <string name="pref_dns_mode_summary">Как выполняется разрешение DNS (требуется Android 2.3+)</string>

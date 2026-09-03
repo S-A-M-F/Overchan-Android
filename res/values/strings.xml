@@ -1029,7 +1029,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_makaba_passcode">Passcode</string>
     <string
         name="pref_changelog"
-    >1.9.3-samf-1: "There are black zones of shadow close to our daily paths..."\n- DNS-over-HTTPS support with 4 modes and customisable DoH server\n- Gensokyo RPG Archive support\n- DNS mismatch detection with review dialog\n- Re-enabled in-app update checker, on by default</string>
+    >1.9.4-samf-1: "Wonder had gone away, and he had forgotten that all life is only a set of pictures in the brain..."\n- Captcha image attachment and save support for imageboard posting\n- Navbar-based new post check for supported boards\n- FreeDroidWarn integration to warn about the incoming block on apps from unverified developers on certified devices\n- iichan posting response timeout setting\n- Cloudflare email obfuscator fix</string>
 
     <string name="dialog_Warning">Google has announced that, starting in 2026/2027, all apps on certified Android devices will require the developer to submit personal identity details directly to Google. Since the developers of this app do not agree to this requirement, this app will no longer work on certified Android devices after that time.</string>
     <string name="dialog_more_info">Details</string>

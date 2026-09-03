@@ -543,7 +543,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
             addCaptchaChkbox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (addCaptchaChkbox.isChecked() && !canAttachOneMore()) {
+                    if (addCaptchaChkbox.isChecked() && attachments.size() >= boardModel.attachmentsMaxCount) {
                         addCaptchaChkbox.setChecked(false);
                         Toast.makeText(PostFormActivity.this, R.string.postform_max_attachments, Toast.LENGTH_LONG).show();
                     }

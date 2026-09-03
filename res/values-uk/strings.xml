@@ -677,6 +677,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>50\uff05</item>
     </string-array>
     <string name="pref_captcha_auto_update">Автоматичне оновлення капчі</string>
+    <string name="postform_add_captcha_to_post">Додати капчу до посту</string>
+    <string name="pref_captcha_save_title">Зберігати зображення капчі</string>
+    <string name="pref_captcha_save_summary">Зберігати капчу, додану до постів, або при кожній спробі відправки</string>
+    <string name="pref_captcha_save_never">Ніколи не зберігати</string>
+    <string name="pref_captcha_save_attached">Зберігати лише ті, що додані до постів</string>
+    <string name="pref_captcha_save_always">Завжди зберігати</string>
+    <string name="postform_captcha_already_paid">Проїзд оплачено</string>
     <string name="app_settings_exporting">Експорт</string>
     <string name="app_settings_importing">Імпорт</string>
     <string name="app_settings_import_completed">Імпорт успішно завершений</string>

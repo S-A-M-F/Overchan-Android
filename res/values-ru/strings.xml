@@ -673,6 +673,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>50\uff05</item>
     </string-array>
     <string name="pref_captcha_auto_update">Автоматическое обновление капчи</string>
+    <string name="postform_add_captcha_to_post">Добавить капчу к сообщению</string>
+    <string name="pref_captcha_save_title">Сохранять изображения капчи</string>
+    <string name="pref_captcha_save_summary">Сохранять капчу, добавленную к сообщениям, или при каждой попытке отправки</string>
+    <string name="pref_captcha_save_never">Никогда не сохранять</string>
+    <string name="pref_captcha_save_attached">Сохранять только прикреплённые к сообщениям</string>
+    <string name="pref_captcha_save_always">Всегда сохранять</string>
+    <string name="postform_captcha_already_paid">Проезд оплачен</string>
     <string name="app_settings_exporting">Экспорт</string>
     <string name="app_settings_importing">Импорт</string>
     <string name="app_settings_import_completed">Импорт успешно завершен</string>

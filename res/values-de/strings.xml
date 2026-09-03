@@ -676,6 +676,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_key_settings_ie_title">Einstellungen Import/Export</string>
     <string name="pref_key_settings_export_title">Export</string>
     <string name="pref_captcha_auto_update">Auto-update CAPTCHA</string>
+    <string name="postform_add_captcha_to_post">Captcha zum Kommentar hinzufügen</string>
+    <string name="pref_captcha_save_title">Captcha-Bilder speichern</string>
+    <string name="pref_captcha_save_summary">Captcha-Bilder speichern, die zu Beiträgen hinzugefügt werden, oder bei jedem Versuch</string>
+    <string name="pref_captcha_save_never">Niemals speichern</string>
+    <string name="pref_captcha_save_attached">Nur diejenigen speichern, die Beiträgen angehängt sind</string>
+    <string name="pref_captcha_save_always">Immer speichern</string>
+    <string name="postform_captcha_already_paid">Fahrkarte bezahlt</string>
     <string name="mark_code">Code</string>
     <string name="pref_post_thumbnail_scale_title">Thumbnail-Größe</string>
     <string name="pref_key_post_thumbnail_scale_toast">Es wird empfohlen, den Cache zu löschen</string>

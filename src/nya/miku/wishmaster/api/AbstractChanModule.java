@@ -593,6 +593,17 @@ public abstract class AbstractChanModule implements HttpChanModule {
     }
 
     /**
+     * Проверить статус адаптивной капчи (например, "проезд оплачен") через легковесный API-запрос.
+     * По умолчанию - false (адаптивная капча не поддерживается).
+     * @param boardName имя доски
+     * @param task задача для отмены
+     * @return true, если адаптивный cookie пользователя валиден
+     */
+    public boolean checkAdaptiveStatus(String boardName, CancellableTask task) throws Exception {
+        return false;
+    }
+
+    /**
      * Добавить в группу параметров настройку сохранения капчи в папку загрузок.
      * Три возможных значения: не сохранять / сохранять только прикреплённые к постам / сохранять всегда.
      */

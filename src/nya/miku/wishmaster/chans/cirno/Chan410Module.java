@@ -167,6 +167,14 @@ public class Chan410Module extends AbstractChanModule {
     }
     
     @Override
+    public boolean checkAdaptiveStatus(String boardName, CancellableTask task) throws Exception {
+        String checkUrl = getUsingUrl() + "api_adaptive.php?board=" + boardName;
+        String result = HttpStreamer.getInstance().getStringFromUrl(
+                checkUrl, HttpRequestModel.DEFAULT_GET, httpClient, null, task, false);
+        return "1".equals(result.trim());
+    }
+    
+    @Override
     public SimpleBoardModel[] getBoardsList(ProgressListener listener, CancellableTask task, SimpleBoardModel[] oldBoardsList) throws Exception {
         return Chan410Boards.getBoardsList();
     }

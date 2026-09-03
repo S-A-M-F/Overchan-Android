@@ -427,7 +427,9 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     }
     
     private boolean canAttachOneMore() {
-        return attachments.size() < boardModel.attachmentsMaxCount;
+        int used = attachments.size();
+        if (addCaptchaChkbox != null && addCaptchaChkbox.isChecked()) used++;
+        return used < boardModel.attachmentsMaxCount;
     }
     
     private Bitmap getBitmap(String filename) {
@@ -537,6 +539,16 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
         addCaptchaChkbox = (CheckBox) findViewById(R.id.postform_add_captcha_checkbox);
         if (!(chan instanceof AbstractChanModule && ((AbstractChanModule) chan).supportsCaptchaAttachment())) {
             addCaptchaChkbox.setVisibility(View.GONE);
+        } else {
+            addCaptchaChkbox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (addCaptchaChkbox.isChecked() && !canAttachOneMore()) {
+                        addCaptchaChkbox.setChecked(false);
+                        Toast.makeText(PostFormActivity.this, R.string.postform_max_attachments, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         }
 
         sendButton = (Button) findViewById(R.id.postform_send_button);
@@ -620,6 +632,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
             attachmentsLayout.removeAllViews();
             attachments.clear();
             for (File attachment : sendPostModel.attachments) {
+                if (CaptchaUtils.isCaptchaAttachment(sendPostModel, attachment)) continue;
                 handleFile(attachment);
             }
         }
@@ -694,10 +707,53 @@ public class PostFormActivity extends Activity implements View.OnClickListener, 
     private void setCaptcha() {
         String lastCaptchaCachedHash = MainApplication.getInstance().draftsCache.getLastCaptchaHash();
         if (lastCaptchaCachedHash != null && lastCaptchaCachedHash.equals(hash)) {
-            switchToCaptcha(MainApplication.getInstance().draftsCache.getLastCaptcha(), false);
+            CaptchaModel cachedCaptcha = MainApplication.getInstance().draftsCache.getLastCaptcha();
+            if (cachedCaptcha != null && cachedCaptcha.alreadyPaid) {
+                verifyAdaptiveAndSetCaptcha(cachedCaptcha);
+            } else {
+                switchToCaptcha(cachedCaptcha, false);
+            }
         } else {
             updateCaptcha();
         }
+    }
+    
+    private void verifyAdaptiveAndSetCaptcha(final CaptchaModel cachedCaptcha) {
+        switchToLoadingCaptcha(true);
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    boolean valid = !(chan instanceof AbstractChanModule) ||
+                            ((AbstractChanModule) chan).checkAdaptiveStatus(sendPostModel.boardName, currentTask);
+                    if (currentTask != null && currentTask.isCancelled()) return;
+                    if (valid) {
+                        Async.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                switchToCaptcha(cachedCaptcha, false);
+                            }
+                        });
+                    } else {
+                        Async.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateCaptcha();
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    Logger.e(TAG, e);
+                    if (currentTask != null && currentTask.isCancelled()) return;
+                    Async.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateCaptcha();
+                        }
+                    });
+                }
+            }
+        });
     }
     
     private void switchToLoadingCaptcha(boolean disableCaptchaField) {

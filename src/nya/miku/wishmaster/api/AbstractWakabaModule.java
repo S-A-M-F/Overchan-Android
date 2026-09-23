@@ -138,6 +138,7 @@ public abstract class AbstractWakabaModule extends CloudflareChanModule {
         if (canHttps()) addHttpsPreference(preferenceGroup, useHttpsDefaultValue());
         addProxyPreferences(preferenceGroup);
         addClearCookiesPreference(preferenceGroup);
+        addCaptchaSavePreference(preferenceGroup);
     }
     
     @Override

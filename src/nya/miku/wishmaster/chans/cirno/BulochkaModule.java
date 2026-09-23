@@ -270,8 +270,9 @@ public class BulochkaModule extends AbstractKusabaModule {
                 ++badgePos;
                 if (badgePos == BADGE_FILTER.length) {
                     String threadBadge = readUntilSequence("\"".toCharArray());
-                    if (threadBadge.contains("locked")) currentThread.isClosed = true;
-                    if (threadBadge.contains("sticky")) currentThread.isSticky = true;
+                    if (threadBadge.contains("locked") && currentPost.number != null) currentThread.isClosed = true;
+                    if (threadBadge.contains("sticky") && currentPost.number != null) currentThread.isSticky = true;
+                    if (threadBadge.contains("sage")) currentPost.sage = true;
                     badgePos = 0;
                 }
             } else {

@@ -60,6 +60,23 @@ public class AppUpdatesChecker {
         }
         return 0;
     }
+
+    private static String getDownloadUrl(JSONObject result, String packageName) {
+        JSONArray assets = result.getJSONArray("assets");
+        if (assets == null || assets.length() == 0) return null;
+        final boolean isDebug = packageName.endsWith(".debug");
+        String fallback = null;
+        for (int i = 0; i < assets.length(); i++) {
+            JSONObject asset = assets.getJSONObject(i);
+            String name = asset.optString("name", "");
+            if (!name.endsWith(".apk")) continue;
+            String assetUrl = asset.getString("browser_download_url");
+            if (fallback == null) fallback = assetUrl;
+            if (name.contains("debug") == isDebug) return assetUrl;
+        }
+        return fallback;
+    }
+
     // URL_PATH was originally /releases/latest (single JSON object) and /releases/tags/current for beta,
     // but the "latest" endpoint only returns non-prerelease, non-draft releases.
     // For samf builds which may be marked as prerelease, we now use /releases?per_page=1
@@ -129,7 +146,8 @@ public class AppUpdatesChecker {
                             MainApplication.getInstance().preferences.edit().putLong(PREF_KEY_LAST_CHECK, System.currentTimeMillis()).commit();
                             if (compareVersions(newVersionName, currentVersionName) > 0) {
                                 String newVersionInfo = result.getString("body");
-                                final String url = result.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
+                                final String url = getDownloadUrl(result, activity.getPackageName());
+                                if (url == null) throw new Exception();
                                 DialogInterface.OnClickListener onClickYes = new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
